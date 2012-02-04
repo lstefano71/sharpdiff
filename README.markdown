@@ -20,10 +20,11 @@ The implementation is not concrete yet, but the current (easiest) way to parse a
 
 ```C#
 using System.IO;
+using System.Collections.Generic;
 using SharpDiff;
 
 Sring diffContent = File.ReadAllText("MyDiffFile.diff");
-Diff diff = Differ.Load(diffContent);
+IEnumerable<Diff> diffs = Differ.Load(diffContent);
 ```
 
 From there you have a compiled version of your diff document. Intellisense will be your friend here, but basically you have a Chunks collection, and a Files collection.

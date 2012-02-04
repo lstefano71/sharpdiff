@@ -82,6 +82,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="FileStructure\AdditionLine.cs" />
     <Compile Include="FileStructure\AdditionSnippet.cs" />
+    <Compile Include="FileStructure\BinaryFiles.cs" />
     <Compile Include="FileStructure\ChangeRange.cs" />
     <Compile Include="FileStructure\Chunk.cs" />
     <Compile Include="FileStructure\ChunkHeader.cs" />

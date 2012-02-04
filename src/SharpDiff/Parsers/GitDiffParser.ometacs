@@ -4,14 +4,18 @@ using SharpDiff.FileStructure;
 using OMetaSharp;
 
 ometa SharpDiff.Parsers.GitDiffParser : Parser {
-	Diffs			= ((NewLine | Empty) Diff)+:diffs								-> { diffs },
-	Diff			= DiffHeader:diffHeader NewLine Headers:headers Chunks:chunks	-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunks.ToIEnumerable<Chunk>()) },
-	DiffHeader		= "diff" Space FormatType:format FileDefs:files					-> { new DiffHeader(format.As<FormatType>(), files.ToIEnumerable<IFile>()) }
-					| "diff" Space FormatType:format								-> { new DiffHeader(format.As<FormatType>()) },
+	Diffs			= ((NewLine | Empty) Diff)+:diffs						-> { diffs },
+	Diff			= DiffHeader:diffHeader NewLine Headers:headers BinaryFiles:binaryFiles
+																			-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), binaryFiles.As<BinaryFiles>()) }
+					| DiffHeader:diffHeader NewLine Headers:headers Chunks:chunks
+																			-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunks.ToIEnumerable<Chunk>()) },
+																			
+	DiffHeader		= "diff" Space FormatType:format FileDefs:files			-> { new DiffHeader(format.As<FormatType>(), files.ToIEnumerable<IFile>()) }
+					| "diff" Space FormatType:format						-> { new DiffHeader(format.As<FormatType>()) },
 
-	Headers				= Header*:headers									-> { headers },
-	Header				= Header_:header NewLine							-> { header },
-	Header_				= ModeHeader
+	Headers				= Header_*:headers									-> { headers },
+	Header_				= Header:header NewLine								-> { header },
+	Header				= ModeHeader
 						| CopyRenameHeader
 						| SimilarityHeader
 						| IndexHeader,
@@ -24,11 +28,13 @@ ometa SharpDiff.Parsers.GitDiffParser : Parser {
 	IndexHeader			= "index" Space HashRange:range Space Number:mode	-> { new IndexHeader(range.As<HashRange>(), mode.As<int>()) }
 						| "index" Space HashRange:range						-> { new IndexHeader(range.As<HashRange>(), null) },
 	
+	BinaryFiles		= "Binary files" Space FileDef:file1 Space "and" Space FileDef:file2 Space "differ" (NewLine | Empty)
+																			-> { new BinaryFiles(file1.As<IFile>(), file2.As<IFile>()) },
 	Chunks			= (ChunkHeader NewLine | Empty) Chunk+:chunks			-> { chunks },
 	Chunk			= ChunkRange:range Snippet+:snippets (NewLine | Empty)	-> { new Chunk(range.As<ChunkRange>(), snippets.ToIEnumerable<ISnippet>()) }
 					| ChunkRange:range (NewLine | Empty)					-> { new Chunk(range.As<ChunkRange>(), new List<ISnippet>()) },
 	
-	ChunkHeader		= "---" FileDef:originalFile NewLine "+++" FileDef:newFile
+	ChunkHeader		= "---" Space FileDef:originalFile NewLine "+++" Space FileDef:newFile
 																		-> { new ChunkHeader(originalFile.As<IFile>(), newFile.As<IFile>()) },
 	ChunkRange		= "@@" Space ChangeRange:originalRange Space ChangeRange:newRange Space "@@" (Text | Empty -> { "" }):value (NewLine | Empty)
 																		-> { new ChunkRange(originalRange.As<ChangeRange>(), newRange.As<ChangeRange>()) },
@@ -66,19 +72,17 @@ ometa SharpDiff.Parsers.GitDiffParser : Parser {
 						| '\\' Space "No newline at end of file"			-> { new NoNewLineAtEOFLine() },
 	Line				= (Text | Empty -> { "" }):value NewLine			-> { value.As<string>() },
 	
-	FileDefs		= FileDef+:files									-> { files },
-	FileDef			= Space Letter:letter "/" Filename:filename			-> { new File(letter.As<char>(), filename.As<string>()) }
-					| Letter:letter "/" Filename:filename				-> { new File(letter.As<char>(), filename.As<string>()) }
+	FileDefs		= FileDef_+:files									-> { files },
+	FileDef_		= Space FileDef:file								-> { file },
+	FileDef			= Letter:letter "/" Filename:filename				-> { new File(letter.As<char>(), filename.As<string>()) }
 					| "/dev/null"										-> { new NullFile() },
 	
 	FormatType		= "--" LetterOrDigit+:format						-> { new FormatType(format.As<string>()) },
 	
 	HashRange		= LetterOrDigit+:first ".." LetterOrDigit+:second	-> { new HashRange(first.As<string>(), second.As<string>()) },
 	
-	Filename		= (~Space ~NewLine Character)+:filename "." LetterOrDigit+:extension
-																		-> { filename + "." + extension }
-					| (~Space ~NewLine Character)+:filename				-> { filename },
-	
+	Filename		= (~Space ~NewLine Character)+:filename				-> { filename },
+
 	Text			= (~NewLine Character)+:t							-> { t.As<string>() },
 	
 	Number		   ^= Digit+:ds<string>									-> { int.Parse(ds) },

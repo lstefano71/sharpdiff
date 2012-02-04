@@ -16,10 +16,12 @@ namespace SharpDiff.TestApp {
 
             string fileName = args[0];
             string content = System.IO.File.ReadAllText(fileName);
-            IEnumerable<Diff> diffs = Differ.Load(content);
-            Console.WriteLine("{0} diffs", diffs.Count());
-
+            IEnumerable<Diff> diffs = Differ.LoadGitDiffParallel(content);
+            List<Diff> l = new List<Diff>(312);
+            int diffCount = 0;
             foreach(var diff in diffs) {
+                diffCount++;
+                //l.Add(diff);
                 Console.Write("+ {0} files", diff.Files.Count);
                 if(diff.IsText) {
                     Console.WriteLine(", {0} chunks", diff.Chunks.Count());
@@ -30,6 +32,8 @@ namespace SharpDiff.TestApp {
                     Console.WriteLine(", binary");
                 }
             }
+            Console.WriteLine("{0} diffs", diffCount);
+            Console.WriteLine("{0} diffs", l.Count);
 
             Console.ReadLine();
         }

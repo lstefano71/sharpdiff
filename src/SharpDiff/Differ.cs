@@ -24,9 +24,26 @@ namespace SharpDiff
 
     public static class Differ
     {
-        public static IEnumerable<Diff> Load(string diffContent)
+        public static IEnumerable<Diff> LoadGitDiff(string diffContent)
         {
             return Grammars.ParseWith<GitDiffParser>(diffContent, x => x.Diffs).ToIEnumerable<Diff>();
+        }
+
+        public static IEnumerable<Diff> LoadGitDiffSplitted(string diffContent) {
+            return SplitGitDiffs(diffContent).Select(ParseSingleGitDiff);
+        }
+
+        public static ParallelQuery<Diff> LoadGitDiffParallel(string diffContent) {
+            return SplitGitDiffs(diffContent).AsParallel().Select(ParseSingleGitDiff);
+        }
+
+        internal static IEnumerable<string> SplitGitDiffs(string diffContent) {
+            string regex = @"(?<=\r\n|\n)(?=diff --git)";
+            return System.Text.RegularExpressions.Regex.Split(diffContent, regex);
+        }
+
+        internal static Diff ParseSingleGitDiff(string diffString) {
+            return Grammars.ParseWith<GitDiffParser>(diffString, x => x.Diff).As<Diff>();
         }
 
         public static Diff Compare(string fileOnePath, string fileOneContent, string fileTwoPath, string fileTwoContent)

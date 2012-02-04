@@ -23,8 +23,18 @@ using System.IO;
 using System.Collections.Generic;
 using SharpDiff;
 
-Sring diffContent = File.ReadAllText("MyDiffFile.diff");
-IEnumerable<Diff> diffs = Differ.Load(diffContent);
+// ...
+
+String diffContent = File.ReadAllText("MyDiffFile.diff");
+
+// normal, sequential parsing -- slow, and memory hungry for large diffs
+IEnumerable<Diff> diffs = Differ.LoadGitDiff(diffContent);
+
+// sequential, but not as memory hungry, as the diff file is split in 'git --diff' pieces
+diffs = Differ.LoadGitDiffSplit(diffContent);
+
+// parallel version
+ParallelQuery<Diff> parallelDiffs = Differ.LoadGitDiffParallel(diffContent);
 ```
 
 From there you have a compiled version of your diff document. Intellisense will be your friend here, but basically you have a Chunks collection, and a Files collection.

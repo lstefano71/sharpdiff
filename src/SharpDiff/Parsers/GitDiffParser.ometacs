@@ -21,8 +21,8 @@ ometa SharpDiff.Parsers.GitDiffParser : Parser {
 						| IndexHeader,
 	ModeHeader			= ("old file"|"new file"|"deleted file"|"old"|"new"|"deleted"):kind Space "mode" Space Number:mode
 																			-> { new ModeHeader(kind.As<string>(), mode.As<int>()) },
-	CopyRenameHeader	= ("copy"|"rename"):transaction Space ("from"|"to"):direction
-																			-> { new CopyRenameHeader(transaction.As<string>(), direction.As<string>()) },
+	CopyRenameHeader	= ("copy"|"rename"):transaction Space ("from"|"to"):direction Space Text:filename
+																			-> { new CopyRenameHeader(transaction.As<string>(), direction.As<string>(), filename.As<string>()) },
 	SimilarityHeader	= ("similarity"|"dissimilarity"):kind Space "index" Space Number:index "%"
 																			-> { new SimilarityHeader(kind.As<string>(), index.As<int>()) },
 	IndexHeader			= "index" Space HashRange:range Space Number:mode	-> { new IndexHeader(range.As<HashRange>(), mode.As<int>()) }

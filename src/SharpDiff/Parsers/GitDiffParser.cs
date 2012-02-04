@@ -425,6 +425,7 @@ namespace SharpDiff.Parsers
         {
             OMetaList<HostExpression> transaction = null;
             OMetaList<HostExpression> direction = null;
+            OMetaList<HostExpression> filename = null;
             modifiedStream = inputStream;
             if(!MetaRules.Apply(
                 delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
@@ -482,7 +483,16 @@ namespace SharpDiff.Parsers
                         return MetaRules.Fail(out result2, out modifiedStream2);
                     }
                     direction = result2;
-                    result2 = ( new CopyRenameHeader(transaction.As<string>(), direction.As<string>()) ).AsHostExpressionList();
+                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    if(!MetaRules.Apply(Text, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    filename = result2;
+                    result2 = ( new CopyRenameHeader(transaction.As<string>(), direction.As<string>(), filename.As<string>()) ).AsHostExpressionList();
                     return MetaRules.Success();
                 }, modifiedStream, out result, out modifiedStream))
             {

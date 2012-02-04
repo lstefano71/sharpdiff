@@ -29,7 +29,7 @@ namespace SharpDiff
             return Grammars.ParseWith<GitDiffParser>(diffContent, x => x.Diffs).ToIEnumerable<Diff>();
         }
 
-        public static IEnumerable<Diff> LoadGitDiffSplitted(string diffContent) {
+        public static IEnumerable<Diff> LoadGitDiffSplit(string diffContent) {
             return SplitGitDiffs(diffContent).Select(ParseSingleGitDiff);
         }
 

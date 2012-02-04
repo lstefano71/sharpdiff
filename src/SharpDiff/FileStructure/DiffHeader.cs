@@ -7,13 +7,20 @@ namespace SharpDiff.FileStructure
     public class DiffHeader
     {
         public DiffHeader(FormatType format)
-            : this(format, new List<IFile>())
-        {}
+            : this(format, new List<IFile>()) { }
+
+        public DiffHeader(FormatType format, string rawFileDefs)
+            : this(format, ParseRawFileDefs(rawFileDefs)) { }
 
         public DiffHeader(FormatType format, IEnumerable<IFile> files)
         {
             Format = format;
             Files = new List<IFile>(files);
+        }
+
+        public static IEnumerable<IFile> ParseRawFileDefs(string rawFileDefs) {
+            // TODO
+            return new IFile[0];
         }
 
         public FormatType Format { get; private set; }

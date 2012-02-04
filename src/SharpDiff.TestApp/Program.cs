@@ -20,13 +20,14 @@ namespace SharpDiff.TestApp {
             Console.WriteLine("{0} diffs", diffs.Count());
 
             foreach(var diff in diffs) {
+                Console.Write("+ {0} files", diff.Files.Count);
                 if(diff.IsText) {
-                    Console.WriteLine("+ {0} chunks", diff.Chunks.Count());
+                    Console.WriteLine(", {0} chunks", diff.Chunks.Count());
                     foreach(var chunk in diff.Chunks) {
                         Console.WriteLine("  + {0} snippets", chunk.Snippets.Count());
                     }
                 } else if(diff.IsBinary) {
-                    Console.WriteLine("+ binary");
+                    Console.WriteLine(", binary");
                 }
             }
 

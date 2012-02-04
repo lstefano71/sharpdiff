@@ -40,7 +40,10 @@ namespace SharpDiff.Tests
         [Test]
         public void MultipleFilenamesAreParsed()
         {
-            var result = ParseList<File>(" a/Filename b/Second.txt", x => x.FileDefs);
+            // TODO
+
+            //var result = ParseList<File>(" a/Filename b/Second.txt", x => x.FileDefs);
+            IEnumerable<File> result = null;
             var list = new List<File>(result);
 
             Assert.That(result, Is.Not.Null);

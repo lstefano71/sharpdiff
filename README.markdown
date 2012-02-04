@@ -18,21 +18,27 @@ Parsing your first diff
 
 The implementation is not concrete yet, but the current (easiest) way to parse a diff file is as follows.
 
-	string diffContent = File.ReadAllText("MyDiffFile.diff");
-	
-	Diff diff = Diff.CreateFrom(diffContent);
+```C#
+using System.IO;
+using SharpDiff;
+
+Sring diffContent = File.ReadAllText("MyDiffFile.diff");
+Diff diff = Differ.Load(diffContent);
+```
 
 From there you have a compiled version of your diff document. Intellisense will be your friend here, but basically you have a Chunks collection, and a Files collection.
 
 The Wikipedia [article on Diffs](http://en.wikipedia.org/wiki/Diff) is worth a read if you're interested. In short though, chunks are formed as a chunk header containing the affected lines, and the lines themselves.
 
-	@@ -1,3 +1,6 @@
-	This is a small text file
- 	+that I quite like,
- 	 with a few lines of text
-	-inside, nothing much.
+```diff
+@@ -1,3 +1,6 @@
+This is a small text file
++that I quite like,
+ with a few lines of text
+-inside, nothing much.
+```
 
-The chunk header is **@@ -1,3 +1,6 @@**. The -1,3 describes the affected lines in the original file, the first number (ignoring the minus) is the start line, and the second number is the total of context lines plus subtraction lines. The second range (+1,6) is in the new file, and that starts on the first line, and has six affected lines; in this case it's all the context lines plus all addition lines.
+The chunk header is `@@ -1,3 +1,6 @@`. The -1,3 describes the affected lines in the original file, the first number (ignoring the minus) is the start line, and the second number is the total of context lines plus subtraction lines. The second range (+1,6) is in the new file, and that starts on the first line, and has six affected lines; in this case it's all the context lines plus all addition lines.
 
 All the other lines are the actual changes themselves. A line prefixed with a + is an addition line, a line prefixed with a - is a subtraction line, and lines prefixed with a space are context lines. Context lines are used for aligning the changes in the document. They're also useful for determining if the document has changed since the diff was created.
 

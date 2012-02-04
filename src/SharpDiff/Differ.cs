@@ -26,7 +26,7 @@ namespace SharpDiff
     {
         public static IEnumerable<Diff> Load(string diffContent)
         {
-            return new List<Diff>(Grammars.ParseWith<GitDiffParser>(diffContent, x => x.Diffs).ToIEnumerable<Diff>());
+            return Grammars.ParseWith<GitDiffParser>(diffContent, x => x.Diffs).ToIEnumerable<Diff>();
         }
 
         public static Diff Compare(string fileOnePath, string fileOneContent, string fileTwoPath, string fileTwoContent)

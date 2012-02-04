@@ -4,13 +4,13 @@ using SharpDiff.FileStructure;
 
 namespace SharpDiff.FileStructure
 {
-    public class Header
+    public class DiffHeader
     {
-        public Header(FormatType format)
+        public DiffHeader(FormatType format)
             : this(format, new List<IFile>())
         {}
 
-        public Header(FormatType format, IEnumerable<IFile> files)
+        public DiffHeader(FormatType format, IEnumerable<IFile> files)
         {
             Format = format;
             Files = new List<IFile>(files);

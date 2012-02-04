@@ -119,7 +119,7 @@ namespace SharpDiff
                 chunks.Add(new Chunk(range, snippets));
             }
 
-            var header = new Header(new FormatType("generated"), new[]
+            var header = new DiffHeader(new FormatType("generated"), new[]
             {
                 new File('a', fileOnePath),
                 new File('b', fileTwoPath)
@@ -136,7 +136,7 @@ namespace SharpDiff
 
         private static Diff DeletedFileDiff(string content, string path)
         {
-            var header = new Header(new FormatType("generated"), new[]
+            var header = new DiffHeader(new FormatType("generated"), new[]
             {
                 new File('a', path),
                 new File('b', "/dev/null")
@@ -153,7 +153,7 @@ namespace SharpDiff
 
         private static Diff NewFileDiff(string content, string path)
         {
-            var header = new Header(new FormatType("generated"), new[]
+            var header = new DiffHeader(new FormatType("generated"), new[]
             {
                 new File('a', "/dev/null"),
                 new File('b', path)

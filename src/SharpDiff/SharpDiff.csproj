@@ -93,6 +93,7 @@
     <Compile Include="FileStructure\File.cs" />
     <Compile Include="FileStructure\FormatType.cs" />
     <Compile Include="Core\IFileAccessor.cs" />
+    <Compile Include="FileStructure\IHeader.cs" />
     <Compile Include="FileStructure\IFile.cs" />
     <Compile Include="FileStructure\ILine.cs" />
     <Compile Include="FileStructure\ISnippet.cs" />
@@ -106,8 +107,7 @@
     <Compile Include="FileStructure\SubtractionSnippet.cs" />
     <Compile Include="Parsers\GitDiffParser.cs" />
     <Compile Include="FileStructure\HashRange.cs" />
-    <Compile Include="FileStructure\Header.cs" />
-    <Compile Include="FileStructure\IndexHeader.cs" />
+    <Compile Include="FileStructure\DiffHeader.cs" />
     <Compile Include="InvalidDiffFormatException.cs" />
     <Compile Include="Parsers\GitNumstatParser.cs" />
     <Compile Include="Patch.cs" />

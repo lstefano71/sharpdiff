@@ -4,29 +4,34 @@ namespace SharpDiff.FileStructure
 {
     public class Diff
     {
-        private readonly Header header;
+        private readonly DiffHeader diffHeader;
+        private readonly IEnumerable<IHeader> headers;
 
-        public Diff(Header header, IEnumerable<Chunk> chunks)
+        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers, IEnumerable<Chunk> chunks)
         {
-            this.header = header;
+            this.diffHeader = diffHeader;
+            this.headers = headers;
             Chunks = new List<Chunk>(chunks);
         }
+
+        public Diff(DiffHeader diffHeader, IEnumerable<Chunk> chunks)
+            : this(diffHeader, new IHeader[0], chunks) {}
 
         public IList<Chunk> Chunks { get; private set; }
 
         public IList<IFile> Files
         {
-            get { return header.Files; }
+            get { return diffHeader.Files; }
         }
 
         public bool IsNewFile
         {
-            get { return header.IsNewFile; }
+            get { return diffHeader.IsNewFile; }
         }
 
         public bool IsDeletion
         {
-            get { return header.IsDeletion; }
+            get { return diffHeader.IsDeletion; }
         }
     }
 }

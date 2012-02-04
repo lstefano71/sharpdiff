@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SharpDiff.FileStructure;
 using OMetaSharp;
 
@@ -14,28 +15,32 @@ ometa SharpDiff.Parsers.GitDiffParser : Parser {
 	Chunk			= ChunkRange:range Snippet+:snippets (NewLine | Empty)
 																		-> { new Chunk(range.As<ChunkRange>(), snippets.ToIEnumerable<ISnippet>()) }
 					| ChunkRange:range (NewLine | Empty)				-> { new Chunk(range.As<ChunkRange>(), new List<ISnippet>()) },
-	
-					
 	ChunkHeader		= "---" FileDef:originalFile NewLine "+++" FileDef:newFile
 																		-> { new ChunkHeader(originalFile.As<IFile>(), newFile.As<IFile>()) },
 	ChunkRange		= "@@" Space ChangeRange:originalRange Space ChangeRange:newRange Space "@@" (Text | Empty -> { "" }):value (NewLine | Empty)
 																		-> { new ChunkRange(originalRange.As<ChangeRange>(), newRange.As<ChangeRange>()) },
 	ChangeRange		= ("+" | "-") Number:line "," Number:affected		-> { new ChangeRange(line.As<int>(), affected.As<int>()) }
 					| ("+" | "-") Number:line							-> { new ChangeRange(line.As<int>(), 1) },
-	Snippet			= ContextSnippet
-					| ModificationSnippet
-					| AdditionSnippet
-					| SubtractionSnippet,
-	ContextSnippet  = ContextLine+:lines								-> { new ContextSnippet(lines.ToIEnumerable<ILine>()) },
-	AdditionSnippet  = AdditionLine+:lines								-> { new AdditionSnippet(lines.ToIEnumerable<ILine>()) },
-	SubtractionSnippet  = SubtractionLine+:lines						-> { new SubtractionSnippet(lines.ToIEnumerable<ILine>()) },
-	ModificationSnippet = SubtractionLine+:subtractions AdditionLine+:additions
-																		-> { new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>()) },
-	DiffLines			= AnyLine+:lines									-> { lines },
-	AnyLine				= ContextLine
-						| AdditionLine
-						| SubtractionLine
-						| NoNewLineAtEOFLine,
+	Snippet				= ContextSnippet
+						| ModificationSnippet
+						| AdditionSnippet
+						| SubtractionSnippet,
+	ContextSnippet		= ContextLine+:lines NoNewLineAtEOFLine:eof		-> { new ContextSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) }
+						| ContextLine+:lines							-> { new ContextSnippet(lines.ToIEnumerable<ILine>()) },
+	AdditionSnippet		= AdditionLine+:lines NoNewLineAtEOFLine:eof	-> { new AdditionSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) }
+						| AdditionLine+:lines							-> { new AdditionSnippet(lines.ToIEnumerable<ILine>()) },
+	SubtractionSnippet	= SubtractionLine+:lines NoNewLineAtEOFLine:eof	-> { new SubtractionSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) }
+						| SubtractionLine+:lines						-> { new SubtractionSnippet(lines.ToIEnumerable<ILine>()) },
+	ModificationSnippet = SubtractionLine+:subtractions NoNewLineAtEOFLine:eof1 AdditionLine+:additions NoNewLineAtEOFLine:eof2
+							-> { new ModificationSnippet(subtractions.ToIEnumerable<ILine>().Concat(new ILine[]{eof1.As<ILine>()}), additions.ToIEnumerable<ILine>().Concat(new ILine[]{eof2.As<ILine>()})) }
+						| SubtractionLine+:subtractions NoNewLineAtEOFLine:eof AdditionLine+:additions
+							-> { new ModificationSnippet(subtractions.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()}), additions.ToIEnumerable<ILine>()) }
+						| SubtractionLine+:subtractions AdditionLine+:additions NoNewLineAtEOFLine:eof
+							-> { new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) }
+						| SubtractionLine+:subtractions AdditionLine+:additions
+							-> { new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>()) },
+	DiffLines			= DiffLine+:lines -> { lines },
+	DiffLine			= ContextLine | AdditionLine | SubtractionLine | NoNewLineAtEOFLine,
 	ContextLine			= Space Line:value									-> { new ContextLine(value.As<string>()) },
 	AdditionLine		= "+" Line:value									-> { new AdditionLine(value.As<string>()) },
 	SubtractionLine		= "-" Line:value									-> { new SubtractionLine(value.As<string>()) },
@@ -50,7 +55,7 @@ ometa SharpDiff.Parsers.GitDiffParser : Parser {
 	HashRange		= LetterOrDigit+:first ".." LetterOrDigit+:second	-> { new HashRange(first.As<string>(), second.As<string>()) },
 	Filename		= (~Space ~NewLine Character)+:filename "." LetterOrDigit+:extension
 																		-> { filename + "." + extension }
-					| (~Space ~NewLine Character)+:filename									-> { filename },
+					| (~Space ~NewLine Character)+:filename				-> { filename },
 	Text			= (~NewLine Character)+:t							-> { t.As<string>() },
 	Number		   ^= Digit+:ds<string>									-> { int.Parse(ds) },
 	NewLine			= '\r' '\n'

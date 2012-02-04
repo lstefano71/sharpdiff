@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SharpDiff.FileStructure;
 using OMetaSharp;
 
@@ -700,29 +701,75 @@ namespace SharpDiff.Parsers
         public virtual bool ContextSnippet(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
             OMetaList<HostExpression> lines = null;
+            OMetaList<HostExpression> eof = null;
             modifiedStream = inputStream;
-            if(!MetaRules.Apply(
-                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
-                {
-                    modifiedStream2 = inputStream2;
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(ContextLine, modifiedStream3, out result3, out modifiedStream3))
-                            {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
-                            }
-                            return MetaRules.Success();
-                        }
-                    , modifiedStream2, out result2, out modifiedStream2))
+            if(!MetaRules.Or(modifiedStream, out result, out modifiedStream,
+            delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                     {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    lines = result2;
-                    result2 = ( new ContextSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
-                    return MetaRules.Success();
-                }, modifiedStream, out result, out modifiedStream))
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(ContextLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof = result3;
+                        result3 = ( new ContextSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
+                    {
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(ContextLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        result3 = ( new ContextSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }
@@ -731,29 +778,75 @@ namespace SharpDiff.Parsers
         public virtual bool AdditionSnippet(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
             OMetaList<HostExpression> lines = null;
+            OMetaList<HostExpression> eof = null;
             modifiedStream = inputStream;
-            if(!MetaRules.Apply(
-                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
-                {
-                    modifiedStream2 = inputStream2;
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(AdditionLine, modifiedStream3, out result3, out modifiedStream3))
-                            {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
-                            }
-                            return MetaRules.Success();
-                        }
-                    , modifiedStream2, out result2, out modifiedStream2))
+            if(!MetaRules.Or(modifiedStream, out result, out modifiedStream,
+            delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                     {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    lines = result2;
-                    result2 = ( new AdditionSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
-                    return MetaRules.Success();
-                }, modifiedStream, out result, out modifiedStream))
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof = result3;
+                        result3 = ( new AdditionSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
+                    {
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        result3 = ( new AdditionSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }
@@ -762,29 +855,75 @@ namespace SharpDiff.Parsers
         public virtual bool SubtractionSnippet(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
             OMetaList<HostExpression> lines = null;
+            OMetaList<HostExpression> eof = null;
             modifiedStream = inputStream;
-            if(!MetaRules.Apply(
-                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
-                {
-                    modifiedStream2 = inputStream2;
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(SubtractionLine, modifiedStream3, out result3, out modifiedStream3))
-                            {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
-                            }
-                            return MetaRules.Success();
-                        }
-                    , modifiedStream2, out result2, out modifiedStream2))
+            if(!MetaRules.Or(modifiedStream, out result, out modifiedStream,
+            delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                     {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    lines = result2;
-                    result2 = ( new SubtractionSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
-                    return MetaRules.Success();
-                }, modifiedStream, out result, out modifiedStream))
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof = result3;
+                        result3 = ( new SubtractionSnippet(lines.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
+                    {
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        lines = result3;
+                        result3 = ( new SubtractionSnippet(lines.ToIEnumerable<ILine>()) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }
@@ -793,45 +932,213 @@ namespace SharpDiff.Parsers
         public virtual bool ModificationSnippet(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
             OMetaList<HostExpression> subtractions = null;
+            OMetaList<HostExpression> eof1 = null;
             OMetaList<HostExpression> additions = null;
+            OMetaList<HostExpression> eof2 = null;
+            OMetaList<HostExpression> eof = null;
             modifiedStream = inputStream;
-            if(!MetaRules.Apply(
-                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            if(!MetaRules.Or(modifiedStream, out result, out modifiedStream,
+            delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
+                    {
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        subtractions = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof1 = result3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        additions = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof2 = result3;
+                        result3 = ( new ModificationSnippet(subtractions.ToIEnumerable<ILine>().Concat(new ILine[]{eof1.As<ILine>()}), additions.ToIEnumerable<ILine>().Concat(new ILine[]{eof2.As<ILine>()})) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
                 {
-                    modifiedStream2 = inputStream2;
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(SubtractionLine, modifiedStream3, out result3, out modifiedStream3))
-                            {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
-                            }
-                            return MetaRules.Success();
-                        }
-                    , modifiedStream2, out result2, out modifiedStream2))
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                     {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    subtractions = result2;
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(AdditionLine, modifiedStream3, out result3, out modifiedStream3))
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
                             {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
                             }
-                            return MetaRules.Success();
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
                         }
-                    , modifiedStream2, out result2, out modifiedStream2))
+                        subtractions = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof = result3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        additions = result3;
+                        result3 = ( new ModificationSnippet(subtractions.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()}), additions.ToIEnumerable<ILine>()) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                     {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    additions = result2;
-                    result2 = ( new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>()) ).AsHostExpressionList();
-                    return MetaRules.Success();
-                }, modifiedStream, out result, out modifiedStream))
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        subtractions = result3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        additions = result3;
+                        if(!MetaRules.Apply(NoNewLineAtEOFLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        eof = result3;
+                        result3 = ( new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>().Concat(new ILine[]{eof.As<ILine>()})) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ,delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+            {
+                modifiedStream2 = inputStream2;
+                if(!MetaRules.Apply(
+                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
+                    {
+                        modifiedStream3 = inputStream3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(SubtractionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        subtractions = result3;
+                        if(!MetaRules.Many1(
+                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
+                            {
+                                modifiedStream4 = inputStream4;
+                                if(!MetaRules.Apply(AdditionLine, modifiedStream4, out result4, out modifiedStream4))
+                                {
+                                    return MetaRules.Fail(out result4, out modifiedStream4);
+                                }
+                                return MetaRules.Success();
+                            }
+                        , modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        additions = result3;
+                        result3 = ( new ModificationSnippet(subtractions.ToIEnumerable<ILine>(), additions.ToIEnumerable<ILine>()) ).AsHostExpressionList();
+                        return MetaRules.Success();
+                    }, modifiedStream2, out result2, out modifiedStream2))
+                {
+                    return MetaRules.Fail(out result2, out modifiedStream2);
+                }
+                return MetaRules.Success();
+            }
+            ))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }
@@ -849,7 +1156,7 @@ namespace SharpDiff.Parsers
                         delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
                         {
                             modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(AnyLine, modifiedStream3, out result3, out modifiedStream3))
+                            if(!MetaRules.Apply(DiffLine, modifiedStream3, out result3, out modifiedStream3))
                             {
                                 return MetaRules.Fail(out result3, out modifiedStream3);
                             }
@@ -868,7 +1175,7 @@ namespace SharpDiff.Parsers
             }
             return MetaRules.Success();
         }
-        public virtual bool AnyLine(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
+        public virtual bool DiffLine(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
             modifiedStream = inputStream;
             if(!MetaRules.Or(modifiedStream, out result, out modifiedStream,

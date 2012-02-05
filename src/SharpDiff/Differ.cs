@@ -10,20 +10,10 @@ using Diff = SharpDiff.FileStructure.Diff;
 
 namespace SharpDiff
 {
-    public class CompareOptions
-    {
-        public int ContextSize { get; set; }
-        public BomMode BomMode { get; set; }
+    public static class Differ {
+        
+        #region parsing "diff --git" files
 
-        public CompareOptions()
-        {
-            ContextSize = 3;
-            BomMode = BomMode.Include;
-        }
-    }
-
-    public static class Differ
-    {
         public static IEnumerable<Diff> LoadGitDiff(string diffContent)
         {
             return Grammars.ParseWith<GitDiffParser>(diffContent, x => x.Diffs).ToIEnumerable<Diff>();
@@ -37,6 +27,8 @@ namespace SharpDiff
             return SplitGitDiffs(diffContent).AsParallel().Select(ParseSingleGitDiff);
         }
 
+        #region helpers
+
         internal static IEnumerable<string> SplitGitDiffs(string diffContent) {
             string regex = @"(?<=\r\n|\n)(?=diff --git)";
             return System.Text.RegularExpressions.Regex.Split(diffContent, regex);
@@ -45,6 +37,12 @@ namespace SharpDiff
         internal static Diff ParseSingleGitDiff(string diffString) {
             return Grammars.ParseWith<GitDiffParser>(diffString, x => x.Diff).As<Diff>();
         }
+
+        #endregion
+
+        #endregion
+
+        #region comparing files
 
         public static Diff Compare(string fileOnePath, string fileOneContent, string fileTwoPath, string fileTwoContent)
         {
@@ -145,13 +143,15 @@ namespace SharpDiff
             return new Diff(header, chunks);
         }
 
-        static bool IsBinary(string content)
+        #region helpers
+
+        internal static bool IsBinary(string content)
         {
             // todo: make this more robust
             return content.Contains("\0\0\0");
         }
 
-        private static Diff DeletedFileDiff(string content, string path)
+        internal static Diff DeletedFileDiff(string content, string path)
         {
             var header = new DiffHeader(new FormatType("generated"), new[]
             {
@@ -168,7 +168,7 @@ namespace SharpDiff
             return new Diff(header, new[] { chunk });
         }
 
-        private static Diff NewFileDiff(string content, string path)
+        internal static Diff NewFileDiff(string content, string path)
         {
             var header = new DiffHeader(new FormatType("generated"), new[]
             {
@@ -185,7 +185,7 @@ namespace SharpDiff
             return new Diff(header, new[] { chunk });
         }
 
-        private static readonly List<byte[]> ByteOrderMarks = new List<byte[]>
+        internal static readonly List<byte[]> ByteOrderMarks = new List<byte[]>
         {
             new byte[] { 0x00, 0x00, 0xFE, 0xFF },
             new byte[] { 0xFF, 0xFE, 0x00, 0x00 },
@@ -194,7 +194,7 @@ namespace SharpDiff
             new byte[] { 0xFF, 0xFE },
         };
 
-        private static string RemoveBom(string content)
+        internal static string RemoveBom(string content)
         {
             var encoding = new UTF8Encoding();
             var bytes = encoding.GetBytes(content);
@@ -209,6 +209,20 @@ namespace SharpDiff
                 return encoding.GetString(bytes.Skip(2).ToArray());
 
             return content;
+        }
+
+        #endregion
+
+        #endregion
+    }
+
+    public class CompareOptions {
+        public int ContextSize { get; set; }
+        public BomMode BomMode { get; set; }
+
+        public CompareOptions() {
+            ContextSize = 3;
+            BomMode = BomMode.Include;
         }
     }
 }

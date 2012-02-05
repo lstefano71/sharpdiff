@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SharpDiff.Core;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff
 {

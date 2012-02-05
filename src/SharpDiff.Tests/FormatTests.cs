@@ -1,5 +1,5 @@
 using NUnit.Framework;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.Tests
 {
@@ -9,7 +9,7 @@ namespace SharpDiff.Tests
         [Test]
         public void FormatParsed()
         {
-            var result = Parse<FormatType>("--git", x => x.FormatType);
+            var result = Parse<DiffFormatType>("--git", x => x.DiffFormatType);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Name, Is.EqualTo("git"));

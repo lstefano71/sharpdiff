@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 using SharpDiff;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.TestApp {
     class Program {

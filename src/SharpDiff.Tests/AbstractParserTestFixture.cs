@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using OMetaSharp;
-using SharpDiff.Parsers;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.Tests
 {

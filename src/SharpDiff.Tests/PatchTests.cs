@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using SharpDiff.Core;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.Tests
 {

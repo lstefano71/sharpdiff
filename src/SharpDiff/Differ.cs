@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using DiffMatchPatch;
 using OMetaSharp;
-using SharpDiff.FileStructure;
-using SharpDiff.Parsers;
-using Diff = SharpDiff.FileStructure.Diff;
+
+using SharpDiff.Parsers.GitDiff;
+using Diff = SharpDiff.Parsers.GitDiff.Diff;
 
 namespace SharpDiff
 {
@@ -134,7 +134,7 @@ namespace SharpDiff
                 chunks.Add(new Chunk(range, snippets));
             }
 
-            var header = new DiffHeader(new FormatType("generated"), new[]
+            var header = new DiffHeader(new DiffFormatType("generated"), new[]
             {
                 new File('a', fileOnePath),
                 new File('b', fileTwoPath)
@@ -153,7 +153,7 @@ namespace SharpDiff
 
         internal static Diff DeletedFileDiff(string content, string path)
         {
-            var header = new DiffHeader(new FormatType("generated"), new[]
+            var header = new DiffHeader(new DiffFormatType("generated"), new[]
             {
                 new File('a', path),
                 new File('b', "/dev/null")
@@ -170,7 +170,7 @@ namespace SharpDiff
 
         internal static Diff NewFileDiff(string content, string path)
         {
-            var header = new DiffHeader(new FormatType("generated"), new[]
+            var header = new DiffHeader(new DiffFormatType("generated"), new[]
             {
                 new File('a', "/dev/null"),
                 new File('b', path)

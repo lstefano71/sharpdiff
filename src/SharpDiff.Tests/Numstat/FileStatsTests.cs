@@ -4,8 +4,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using OMetaSharp;
-using SharpDiff.FileStructure.Numstat;
-using SharpDiff.Parsers;
+using SharpDiff.Parsers.GitNumstat;
 
 namespace SharpDiff.Tests.Numstat
 {

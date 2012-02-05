@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.Tests
 {

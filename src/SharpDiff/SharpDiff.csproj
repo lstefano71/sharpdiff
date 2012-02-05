@@ -81,49 +81,50 @@
     <Compile Include="BomMode.cs" />
     <Compile Include="Differ.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="FileStructure\AdditionLine.cs" />
-    <Compile Include="FileStructure\AdditionSnippet.cs" />
-    <Compile Include="FileStructure\BinaryFiles.cs" />
-    <Compile Include="FileStructure\ChangeRange.cs" />
-    <Compile Include="FileStructure\Chunk.cs" />
-    <Compile Include="FileStructure\ChunkHeader.cs" />
-    <Compile Include="FileStructure\ChunkRange.cs" />
-    <Compile Include="FileStructure\ContextLine.cs" />
-    <Compile Include="FileStructure\ContextSnippet.cs" />
-    <Compile Include="FileStructure\Diff.cs" />
+    <Compile Include="Parsers\GitDiff\Headers\IndexHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Headers\SimilarityHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Headers\CopyRenameHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Headers\ModeHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\AdditionLine.cs" />
+    <Compile Include="Parsers\GitDiff\Snippets\AdditionSnippet.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\BinaryFiles.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\ChangeRange.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\Chunk.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\ChunkHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\ChunkRange.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\ContextLine.cs" />
+    <Compile Include="Parsers\GitDiff\Snippets\ContextSnippet.cs" />
+    <Compile Include="Parsers\GitDiff\Diff.cs" />
     <Compile Include="Core\FileAccessor.cs" />
-    <Compile Include="FileStructure\File.cs" />
-    <Compile Include="FileStructure\FormatType.cs" />
+    <Compile Include="Parsers\GitDiff\Files\File.cs" />
     <Compile Include="Core\IFileAccessor.cs" />
-    <Compile Include="FileStructure\IHeader.cs" />
-    <Compile Include="FileStructure\IFile.cs" />
-    <Compile Include="FileStructure\ILine.cs" />
-    <Compile Include="FileStructure\ISnippet.cs" />
-    <Compile Include="FileStructure\ModificationSnippet.cs" />
-    <Compile Include="FileStructure\ModificationLine.cs" />
-    <Compile Include="FileStructure\NoNewLineAtEOFLine.cs" />
-    <Compile Include="FileStructure\NullFile.cs" />
-    <Compile Include="FileStructure\Numstat\FileStats.cs" />
-    <Compile Include="FileStructure\Span.cs" />
-    <Compile Include="FileStructure\SpanKind.cs" />
-    <Compile Include="FileStructure\SubtractionSnippet.cs" />
-    <Compile Include="Parsers\GitDiffParser.cs" />
-    <Compile Include="FileStructure\HashRange.cs" />
-    <Compile Include="FileStructure\DiffHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Headers\IHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Files\IFile.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\ILine.cs" />
+    <Compile Include="Parsers\GitDiff\Snippets\ISnippet.cs" />
+    <Compile Include="Parsers\GitDiff\Snippets\ModificationSnippet.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\ModificationLine.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\NoNewLineAtEOFLine.cs" />
+    <Compile Include="Parsers\GitDiff\Files\NullFile.cs" />
+    <Compile Include="Parsers\GitNumstat\FileStats.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\LineSpan.cs" />
+    <Compile Include="Parsers\GitDiff\Snippets\SubtractionSnippet.cs" />
+    <Compile Include="Parsers\GitDiff\GitDiffParser.cs" />
+    <Compile Include="Parsers\GitDiff\DiffHeader.cs" />
     <Compile Include="InvalidDiffFormatException.cs" />
-    <Compile Include="Parsers\GitNumstatParser.cs" />
+    <Compile Include="Parsers\GitNumstat\GitNumstatParser.cs" />
     <Compile Include="Patch.cs" />
     <Compile Include="PatchMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="FileStructure\SubtractionLine.cs" />
+    <Compile Include="Parsers\GitDiff\Lines\SubtractionLine.cs" />
     <Compile Include="Utils\DiffMatchPatch.cs" />
     <Compile Include="Utils\MathertelDiff.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Parsers\GitNumstatParser.ometacs">
+    <None Include="Parsers\GitNumstat\GitNumstatParser.ometacs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Parsers\GitDiffParser.ometacs">
+    <None Include="Parsers\GitDiff\GitDiffParser.ometacs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

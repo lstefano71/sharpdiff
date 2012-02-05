@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
-using SharpDiff.FileStructure;
+using SharpDiff.Parsers.GitDiff;
 using File = System.IO.File;
 
 namespace SharpDiff.Tests

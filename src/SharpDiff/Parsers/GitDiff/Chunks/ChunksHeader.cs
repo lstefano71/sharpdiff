@@ -1,8 +1,8 @@
 namespace SharpDiff.Parsers.GitDiff
 {
-    public class ChunkHeader
+    public class ChunksHeader
     {
-        public ChunkHeader(IFile originalFile, IFile newFile)
+        public ChunksHeader(IFile originalFile, IFile newFile)
         {
             OriginalFile = originalFile;
             NewFile = newFile;

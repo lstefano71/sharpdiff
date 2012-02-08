@@ -134,13 +134,11 @@ namespace SharpDiff
                 chunks.Add(new Chunk(range, snippets));
             }
 
-            var header = new DiffHeader(new DiffFormatType("generated"), new[]
-            {
-                new File('a', fileOnePath),
-                new File('b', fileTwoPath)
-            });
+            var fileOne = new File('a', fileOnePath);
+            var fileTwo = new File('b', fileTwoPath);
+            var header = new DiffHeader(new DiffFormatType("generated"), new[] { fileOne, fileTwo });
 
-            return new Diff(header, chunks);
+            return new Diff(header, new IHeader[0], new ChunksHeader(fileOne, fileTwo), chunks);
         }
 
         #region helpers
@@ -153,11 +151,9 @@ namespace SharpDiff
 
         internal static Diff DeletedFileDiff(string content, string path)
         {
-            var header = new DiffHeader(new DiffFormatType("generated"), new[]
-            {
-                new File('a', path),
-                new File('b', "/dev/null")
-            });
+            var fileOne = new File('a', path);
+            var fileTwo = new NullFile();
+            var header = new DiffHeader(new DiffFormatType("generated"), new IFile[] { fileOne, fileTwo });
 
             var lines = content.SplitIntoLines()
                 .Select(x => (ILine)new SubtractionLine(x));
@@ -165,16 +161,14 @@ namespace SharpDiff
             var snippet = new SubtractionSnippet(lines);
             var chunk = new Chunk(range, new[] { snippet });
 
-            return new Diff(header, new[] { chunk });
+            return new Diff(header, new IHeader[0], new ChunksHeader(fileOne, fileTwo), new[] { chunk });
         }
 
         internal static Diff NewFileDiff(string content, string path)
         {
-            var header = new DiffHeader(new DiffFormatType("generated"), new[]
-            {
-                new File('a', "/dev/null"),
-                new File('b', path)
-            });
+            var fileOne = new NullFile();
+            var fileTwo = new File('b', path);
+            var header = new DiffHeader(new DiffFormatType("generated"), new IFile[] { fileOne, fileTwo });
 
             var lines = content.SplitIntoLines()
                 .Select(x => (ILine)new AdditionLine(x));
@@ -182,7 +176,7 @@ namespace SharpDiff
             var snippet = new AdditionSnippet(lines);
             var chunk = new Chunk(range, new[] { snippet });
 
-            return new Diff(header, new[] { chunk });
+            return new Diff(header, new IHeader[0], new ChunksHeader(fileOne, fileTwo), new[] { chunk });
         }
 
         internal static readonly List<byte[]> ByteOrderMarks = new List<byte[]>

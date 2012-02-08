@@ -12,7 +12,7 @@ namespace SharpDiff.Tests
         [Test]
         public void DiffAndFormatParsed()
         {
-            var result = Parse<DiffHeader>("diff --git", x => x.Header);
+            var result = Parse<DiffHeader>("diff --git", x => x.DiffHeader);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Format, Is.Not.Null);
@@ -22,13 +22,14 @@ namespace SharpDiff.Tests
         [Test]
         public void DiffAndFormatParsedWithFiles()
         {
-            var result = Parse<DiffHeader>("diff --git a/Filename b/File2.txt", x => x.Header);
+            var result = Parse<DiffHeader>("diff --git a/Filename b/File2.txt", x => x.DiffHeader);
 
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Format, Is.Not.Null);
             Assert.That(result.Format.Name, Is.EqualTo("git"));
 
-            var list = new List<IFile>(result.Files);
+            var helper = new Diff.DetermineFileDefNamesHelper(result);
+            var list = helper.GetHeaderFiles();
             var first = (File)list[0];
             var second = (File)list[1];
 
@@ -72,35 +73,33 @@ namespace SharpDiff.Tests
         }
 
         [Test]
-        public void IsDeletionIsFalseWhenBothFilenamesArePresent()
+        public void DiffHeaderIsValidIfNoFileIsNull()
         {
-            var result = Parse<DiffHeader>("diff --git a/code.cs b/code.cs\r\n", x => x.Header);
-
-            Assert.That(result.IsDeletion, Is.False);
+            var header = Parse<DiffHeader>("diff --git a/code.cs b/code.cs\r\n", x => x.DiffHeader);
+            var helper = new Diff.DetermineFileDefNamesHelper(header);
+            var files = helper.GetHeaderFiles();
+            Assert.IsNotInstanceOf<NullFile>(files[0]);
+            Assert.IsNotInstanceOf<NullFile>(files[1]);
         }
 
         [Test]
-        public void IsDeletionIsTrueWhenRightFileIsNull()
+        public void DiffHeaderIsInvalidIfRightIsNull()
         {
-            var result = Parse<DiffHeader>("diff --git a/code.cs /dev/null\r\n", x => x.Header);
-
-            Assert.That(result.IsDeletion, Is.True);
+            var header = Parse<DiffHeader>("diff --git a/code.cs /dev/null\r\n", x => x.DiffHeader);
+            var helper = new Diff.DetermineFileDefNamesHelper(header);
+            var files = helper.GetHeaderFiles();
+            Assert.IsInstanceOf<NullFile>(files[0]);
+            Assert.IsInstanceOf<NullFile>(files[1]);
         }
 
         [Test]
-        public void IsNewFileIsFalseWhenBothFilenamesArePresent()
+        public void DiffHeaderIsInvalidIfLeftIsNull()
         {
-            var result = Parse<DiffHeader>("diff --git a/code.cs b/code.cs\r\n", x => x.Header);
-
-            Assert.That(result.IsNewFile, Is.False);
-        }
-
-        [Test]
-        public void IsNewFileIsTrueWhenLeftFileIsNull()
-        {
-            var result = Parse<DiffHeader>("diff --git /dev/null b/code.cs\r\n", x => x.Header);
-
-            Assert.That(result.IsNewFile, Is.True);
+            var header = Parse<DiffHeader>("diff --git /dev/null b/code.cs\r\n", x => x.DiffHeader);
+            var helper = new Diff.DetermineFileDefNamesHelper(header);
+            var files = helper.GetHeaderFiles();
+            Assert.IsInstanceOf<NullFile>(files[0]);
+            Assert.IsInstanceOf<NullFile>(files[1]);
         }
 
         [Test]

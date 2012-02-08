@@ -28,31 +28,21 @@ namespace SharpDiff.Tests
         }
 
         [Test]
-        public void FilenameParsedWithPreceedingSpace()
-        {
-            var result = Parse<File>(" a/Filename", x => x.FileDef);
-
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.Letter, Is.EqualTo('a'));
-            Assert.That(result.FileName, Is.EqualTo("Filename"));
-        }
-
-        [Test]
         public void MultipleFilenamesAreParsed()
         {
             // TODO
 
-            //var result = ParseList<File>(" a/Filename b/Second.txt", x => x.FileDefs);
-            IEnumerable<File> result = null;
-            var list = new List<File>(result);
+            var rawFileDefs = "a/Filename b/Second.txt";
+            var helper = new Diff.DetermineFileDefNamesHelper(rawFileDefs);
+            var list = helper.GetHeaderFiles();
 
-            Assert.That(result, Is.Not.Null);
+            Assert.That(list, Is.Not.Null);
             Assert.That(list[0], Is.Not.Null);
-            Assert.That(list[0].Letter, Is.EqualTo('a'));
+            Assert.That(((File)list[0]).Letter, Is.EqualTo('a'));
             Assert.That(list[0].FileName, Is.EqualTo("Filename"));
 
             Assert.That(list[1], Is.Not.Null);
-            Assert.That(list[1].Letter, Is.EqualTo('b'));
+            Assert.That(((File)list[1]).Letter, Is.EqualTo('b'));
             Assert.That(list[1].FileName, Is.EqualTo("Second.txt"));
         }
 

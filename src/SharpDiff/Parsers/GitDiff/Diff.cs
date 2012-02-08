@@ -2,51 +2,74 @@ using System.Collections.Generic;
 
 namespace SharpDiff.Parsers.GitDiff
 {
-    public class Diff
+    public partial class Diff
     {
-        private readonly DiffHeader diffHeader;
-        private readonly IEnumerable<IHeader> headers;
-        private readonly BinaryFiles binaryFiles;
+        protected DiffHeader diffHeader;
+        protected IEnumerable<IHeader> headers;
 
-        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers, IEnumerable<Chunk> chunks)
-        {
+        protected IList<IFile> files; // in contrast to the diff header's files, this collection may contain a NullFile
+
+        protected ChunksHeader chunksHeader;
+        protected IList<Chunk> chunks;
+
+        protected BinaryFiles binaryFiles;
+
+        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers) {
             this.diffHeader = diffHeader;
+            this.diffHeader.Diff = this; // might help to parse the file names
             this.headers = headers;
-            Chunks = new List<Chunk>(chunks);
         }
 
-        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers, BinaryFiles binaryFiles) {
-            this.diffHeader = diffHeader;
-            this.headers = headers;
+        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers, ChunksHeader chunksHeader, IEnumerable<Chunk> chunks)
+            : this(diffHeader, headers) {
+            this.chunksHeader = chunksHeader;
+            if(chunks != null) this.chunks = new List<Chunk>(chunks);
+        }
+
+        public Diff(DiffHeader diffHeader, IEnumerable<IHeader> headers, BinaryFiles binaryFiles)
+            : this(diffHeader, headers) {
             this.binaryFiles = binaryFiles;
+            this.binaryFiles.Diff = this; // might help to parse the file names
         }
 
-        public Diff(DiffHeader diffHeader, IEnumerable<Chunk> chunks)
-            : this(diffHeader, new IHeader[0], chunks) {}
+        public IList<Chunk> Chunks { get { return this.chunks; } }
 
-        public IList<Chunk> Chunks { get; private set; }
-
-        public IList<IFile> Files
-        {
-            get { return diffHeader.Files; }
+        public IList<IFile> Files {
+            get {
+                if(this.files == null) {
+                    this.DetermineFileNames();
+                }
+                return this.files;
+            }
         }
-
-        public bool IsNewFile
-        {
+        
+        public bool IsNewFile {
             get { return diffHeader.IsNewFile; }
         }
-
-        public bool IsDeletion
-        {
+        public bool IsDeletion {
             get { return diffHeader.IsDeletion; }
         }
 
+        public bool HasChunks {
+            get { return this.chunks != null; }
+        }
         public bool IsBinary {
             get { return this.binaryFiles != null; }
         }
 
-        public bool IsText {
-            get { return this.Chunks != null; }
+        public bool GetCopyRenameHeaders(out CopyRenameHeader from, out CopyRenameHeader to) {
+            from = null; to = null;
+            foreach(var header in this.headers) {
+                if(header is CopyRenameHeader) {
+                    CopyRenameHeader header_ = (CopyRenameHeader)header;
+                    if(header_.Direction == "from") from = header_;
+                    else if(header_.Direction == "to") to = header_;
+
+                    if(from != null && to != null) return true;
+                }
+            }
+
+            return false;
         }
     }
 }

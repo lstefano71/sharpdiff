@@ -74,6 +74,7 @@ namespace SharpDiff.Parsers.GitDiff
         {
             OMetaList<HostExpression> diffHeader = null;
             OMetaList<HostExpression> headers = null;
+            OMetaList<HostExpression> chunksHeader = null;
             OMetaList<HostExpression> chunks = null;
             OMetaList<HostExpression> binaryFiles = null;
             modifiedStream = inputStream;
@@ -99,12 +100,21 @@ namespace SharpDiff.Parsers.GitDiff
                             return MetaRules.Fail(out result3, out modifiedStream3);
                         }
                         headers = result3;
+                        if(!MetaRules.Apply(ChunksHeader, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
+                        chunksHeader = result3;
+                        if(!MetaRules.Apply(NewLine, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
                         if(!MetaRules.Apply(Chunks, modifiedStream3, out result3, out modifiedStream3))
                         {
                             return MetaRules.Fail(out result3, out modifiedStream3);
                         }
                         chunks = result3;
-                        result3 = ( new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunks.ToIEnumerable<Chunk>()) ).AsHostExpressionList();
+                        result3 = ( new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunksHeader.As<ChunksHeader>(), chunks.ToIEnumerable<Chunk>()) ).AsHostExpressionList();
                         return MetaRules.Success();
                     }, modifiedStream2, out result2, out modifiedStream2))
                 {
@@ -178,6 +188,10 @@ namespace SharpDiff.Parsers.GitDiff
                             return MetaRules.Fail(out result3, out modifiedStream3);
                         }
                         format = result3;
+                        if(!MetaRules.Apply(Space, modifiedStream3, out result3, out modifiedStream3))
+                        {
+                            return MetaRules.Fail(out result3, out modifiedStream3);
+                        }
                         if(!MetaRules.Apply(Text, modifiedStream3, out result3, out modifiedStream3))
                         {
                             return MetaRules.Fail(out result3, out modifiedStream3);
@@ -686,6 +700,10 @@ namespace SharpDiff.Parsers.GitDiff
                     {
                         return MetaRules.Fail(out result2, out modifiedStream2);
                     }
+                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
                     if(!MetaRules.Apply(Text, modifiedStream2, out result2, out modifiedStream2))
                     {
                         return MetaRules.Fail(out result2, out modifiedStream2);
@@ -722,71 +740,72 @@ namespace SharpDiff.Parsers.GitDiff
             }
             return MetaRules.Success();
         }
-        public virtual bool Chunks(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
+        public virtual bool ChunksHeader(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
         {
-            OMetaList<HostExpression> chunks = null;
+            OMetaList<HostExpression> originalFile = null;
+            OMetaList<HostExpression> newFile = null;
             modifiedStream = inputStream;
             if(!MetaRules.Apply(
                 delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
                 {
                     modifiedStream2 = inputStream2;
-                    if(!MetaRules.Or(modifiedStream2, out result2, out modifiedStream2,
-                    delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                    {
-                        modifiedStream3 = inputStream3;
-                        if(!MetaRules.Apply(
-                            delegate(OMetaStream<char> inputStream4, out OMetaList<HostExpression> result4, out OMetaStream <char> modifiedStream4)
-                            {
-                                modifiedStream4 = inputStream4;
-                                if(!MetaRules.Apply(ChunkHeader, modifiedStream4, out result4, out modifiedStream4))
-                                {
-                                    return MetaRules.Fail(out result4, out modifiedStream4);
-                                }
-                                if(!MetaRules.Apply(NewLine, modifiedStream4, out result4, out modifiedStream4))
-                                {
-                                    return MetaRules.Fail(out result4, out modifiedStream4);
-                                }
-                                return MetaRules.Success();
-                            }, modifiedStream3, out result3, out modifiedStream3))
-                        {
-                            return MetaRules.Fail(out result3, out modifiedStream3);
-                        }
-                        return MetaRules.Success();
-                    }
-                    ,delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                    {
-                        modifiedStream3 = inputStream3;
-                        if(!MetaRules.Apply(Empty, modifiedStream3, out result3, out modifiedStream3))
-                        {
-                            return MetaRules.Fail(out result3, out modifiedStream3);
-                        }
-                        return MetaRules.Success();
-                    }
-                    ))
+                    if(!MetaRules.ApplyWithArgs(Token, modifiedStream2, out result2, out modifiedStream2, ("---").AsHostExpressionList()))
                     {
                         return MetaRules.Fail(out result2, out modifiedStream2);
                     }
-                    if(!MetaRules.Many1(
-                        delegate(OMetaStream<char> inputStream3, out OMetaList<HostExpression> result3, out OMetaStream <char> modifiedStream3)
-                        {
-                            modifiedStream3 = inputStream3;
-                            if(!MetaRules.Apply(Chunk, modifiedStream3, out result3, out modifiedStream3))
-                            {
-                                return MetaRules.Fail(out result3, out modifiedStream3);
-                            }
-                            return MetaRules.Success();
-                        }
-                    , modifiedStream2, out result2, out modifiedStream2))
+                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
                     {
                         return MetaRules.Fail(out result2, out modifiedStream2);
                     }
-                    chunks = result2;
-                    result2 = ( chunks ).AsHostExpressionList();
+                    if(!MetaRules.Apply(FileDef, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    originalFile = result2;
+                    if(!MetaRules.Apply(NewLine, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    if(!MetaRules.ApplyWithArgs(Token, modifiedStream2, out result2, out modifiedStream2, ("+++").AsHostExpressionList()))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    if(!MetaRules.Apply(FileDef, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    newFile = result2;
+                    result2 = ( new ChunksHeader(originalFile.As<IFile>(), newFile.As<IFile>()) ).AsHostExpressionList();
                     return MetaRules.Success();
                 }, modifiedStream, out result, out modifiedStream))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }
+            return MetaRules.Success();
+        }
+        public virtual bool Chunks(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
+        {
+            OMetaList<HostExpression> chunks = null;
+            modifiedStream = inputStream;
+            if(!MetaRules.Many1(
+                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
+                {
+                    modifiedStream2 = inputStream2;
+                    if(!MetaRules.Apply(Chunk, modifiedStream2, out result2, out modifiedStream2))
+                    {
+                        return MetaRules.Fail(out result2, out modifiedStream2);
+                    }
+                    return MetaRules.Success();
+                }
+            , modifiedStream, out result, out modifiedStream))
+            {
+                return MetaRules.Fail(out result, out modifiedStream);
+            }
+            chunks = result;
             return MetaRules.Success();
         }
         public virtual bool Chunk(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
@@ -897,53 +916,6 @@ namespace SharpDiff.Parsers.GitDiff
                 return MetaRules.Success();
             }
             ))
-            {
-                return MetaRules.Fail(out result, out modifiedStream);
-            }
-            return MetaRules.Success();
-        }
-        public virtual bool ChunkHeader(OMetaStream<char> inputStream, out OMetaList<HostExpression> result, out OMetaStream <char> modifiedStream)
-        {
-            OMetaList<HostExpression> originalFile = null;
-            OMetaList<HostExpression> newFile = null;
-            modifiedStream = inputStream;
-            if(!MetaRules.Apply(
-                delegate(OMetaStream<char> inputStream2, out OMetaList<HostExpression> result2, out OMetaStream <char> modifiedStream2)
-                {
-                    modifiedStream2 = inputStream2;
-                    if(!MetaRules.ApplyWithArgs(Token, modifiedStream2, out result2, out modifiedStream2, ("---").AsHostExpressionList()))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    if(!MetaRules.Apply(FileDef, modifiedStream2, out result2, out modifiedStream2))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    originalFile = result2;
-                    if(!MetaRules.Apply(NewLine, modifiedStream2, out result2, out modifiedStream2))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    if(!MetaRules.ApplyWithArgs(Token, modifiedStream2, out result2, out modifiedStream2, ("+++").AsHostExpressionList()))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    if(!MetaRules.Apply(Space, modifiedStream2, out result2, out modifiedStream2))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    if(!MetaRules.Apply(FileDef, modifiedStream2, out result2, out modifiedStream2))
-                    {
-                        return MetaRules.Fail(out result2, out modifiedStream2);
-                    }
-                    newFile = result2;
-                    result2 = ( new ChunkHeader(originalFile.As<IFile>(), newFile.As<IFile>()) ).AsHostExpressionList();
-                    return MetaRules.Success();
-                }, modifiedStream, out result, out modifiedStream))
             {
                 return MetaRules.Fail(out result, out modifiedStream);
             }

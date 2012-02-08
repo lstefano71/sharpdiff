@@ -81,6 +81,7 @@
     <Compile Include="BomMode.cs" />
     <Compile Include="Differ.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Parsers\GitDiff\Diff.DetermineFileNames.cs" />
     <Compile Include="Parsers\GitDiff\Headers\IndexHeader.cs" />
     <Compile Include="Parsers\GitDiff\Headers\SimilarityHeader.cs" />
     <Compile Include="Parsers\GitDiff\Headers\CopyRenameHeader.cs" />
@@ -90,7 +91,7 @@
     <Compile Include="Parsers\GitDiff\Chunks\BinaryFiles.cs" />
     <Compile Include="Parsers\GitDiff\Chunks\ChangeRange.cs" />
     <Compile Include="Parsers\GitDiff\Chunks\Chunk.cs" />
-    <Compile Include="Parsers\GitDiff\Chunks\ChunkHeader.cs" />
+    <Compile Include="Parsers\GitDiff\Chunks\ChunksHeader.cs" />
     <Compile Include="Parsers\GitDiff\Chunks\ChunkRange.cs" />
     <Compile Include="Parsers\GitDiff\Lines\ContextLine.cs" />
     <Compile Include="Parsers\GitDiff\Snippets\ContextSnippet.cs" />

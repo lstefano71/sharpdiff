@@ -6,12 +6,13 @@ using OMetaSharp;
 
 ometa SharpDiff.Parsers.GitDiff.GitDiffParser : Parser {
 	Diffs			= ((NewLine | Empty) Diff)+:diffs						-> { diffs },
-	Diff			= DiffHeader:diffHeader NewLine Headers:headers Chunks:chunks
-																			-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunks.ToIEnumerable<Chunk>()) }
+	Diff			= DiffHeader:diffHeader NewLine Headers:headers ChunksHeader:chunksHeader NewLine Chunks:chunks
+																			-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), chunksHeader.As<ChunksHeader>(), chunks.ToIEnumerable<Chunk>()) }
 					| DiffHeader:diffHeader NewLine Headers:headers BinaryFiles:binaryFiles
 																			-> { new Diff(diffHeader.As<DiffHeader>(), headers.ToIEnumerable<IHeader>(), binaryFiles.As<BinaryFiles>()) },
 																			
-	DiffHeader		= "diff" Space DiffFormatType:format Text:rawFileDefs	-> { new DiffHeader(format.As<DiffFormatType>(), rawFileDefs.As<string>()) }
+	DiffHeader		= "diff" Space DiffFormatType:format Space Text:rawFileDefs
+																			-> { new DiffHeader(format.As<DiffFormatType>(), rawFileDefs.As<string>()) }
 					| "diff" Space DiffFormatType:format					-> { new DiffHeader(format.As<DiffFormatType>(), (string)null) },
 	DiffFormatType	= "--" LetterOrDigit+:format							-> { new DiffFormatType(format.As<string>()) },
 
@@ -30,17 +31,17 @@ ometa SharpDiff.Parsers.GitDiff.GitDiffParser : Parser {
 	IndexHeader			= "index" Space HashRange:range Space Number:mode	-> { new IndexHeader(range.As<HashRange>(), mode.As<int>()) }
 						| "index" Space HashRange:range						-> { new IndexHeader(range.As<HashRange>(), null) },
 	
-	BinaryFiles		= "Binary files" Text:raw (NewLine | Empty)				-> { new BinaryFiles(raw.As<string>()) },
-	Chunks			= (ChunkHeader NewLine | Empty) Chunk+:chunks			-> { chunks },
+	BinaryFiles		= "Binary files" Space Text:raw (NewLine | Empty)		-> { new BinaryFiles(raw.As<string>()) },
+
+	ChunksHeader	= "---" Space FileDef:originalFile NewLine "+++" Space FileDef:newFile
+																			-> { new ChunksHeader(originalFile.As<IFile>(), newFile.As<IFile>()) },
+	Chunks			= Chunk+:chunks,
 	Chunk			= ChunkRange:range Snippet+:snippets (NewLine | Empty)	-> { new Chunk(range.As<ChunkRange>(), snippets.ToIEnumerable<ISnippet>()) }
 					| ChunkRange:range (NewLine | Empty)					-> { new Chunk(range.As<ChunkRange>(), new List<ISnippet>()) },
-	
-	ChunkHeader		= "---" Space FileDef:originalFile NewLine "+++" Space FileDef:newFile
-																		-> { new ChunkHeader(originalFile.As<IFile>(), newFile.As<IFile>()) },
 	ChunkRange		= "@@" Space ChangeRange:originalRange Space ChangeRange:newRange Space "@@" (Text | Empty -> { "" }):value (NewLine | Empty)
-																		-> { new ChunkRange(originalRange.As<ChangeRange>(), newRange.As<ChangeRange>()) },
-	ChangeRange		= ("+" | "-") Number:line "," Number:affected		-> { new ChangeRange(line.As<int>(), affected.As<int>()) }
-					| ("+" | "-") Number:line							-> { new ChangeRange(line.As<int>(), 1) },
+																			-> { new ChunkRange(originalRange.As<ChangeRange>(), newRange.As<ChangeRange>()) },
+	ChangeRange		= ("+" | "-") Number:line "," Number:affected			-> { new ChangeRange(line.As<int>(), affected.As<int>()) }
+					| ("+" | "-") Number:line								-> { new ChangeRange(line.As<int>(), 1) },
 	
 	Snippet				= ContextSnippet
 						| ModificationSnippet

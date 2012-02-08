@@ -23,7 +23,7 @@ namespace SharpDiff.TestApp {
                 diffCount++;
                 //l.Add(diff);
                 Console.Write("+ {0} files", diff.Files.Count);
-                if(diff.IsText) {
+                if(diff.HasChunks) {
                     Console.WriteLine(", {0} chunks", diff.Chunks.Count());
                     foreach(var chunk in diff.Chunks) {
                         Console.WriteLine("  + {0} snippets", chunk.Snippets.Count());

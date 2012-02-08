@@ -1,15 +1,20 @@
-﻿namespace SharpDiff.Parsers.GitDiff {
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace SharpDiff.Parsers.GitDiff {
+
     public class BinaryFiles {
+
+        protected string rawFileDefs;
+        internal string RawFileDefs { get { return this.rawFileDefs; } }
+
+        protected Diff diff; // might be required to determine the file names. See DetermineFiles().
+        internal Diff Diff { set { this.diff = value; } }
+
+        public IList<IFile> Files { get { return this.diff.Files; } }
+
         public BinaryFiles(string rawFileDefs) {
-            // TODO
+            this.rawFileDefs = rawFileDefs;
         }
-
-        public BinaryFiles(IFile file1, IFile file2) {
-            this.File1 = file1;
-            this.File2 = file2;
-        }
-
-        public IFile File1 { get; private set; }
-        public IFile File2 { get; private set; }
     }
 }

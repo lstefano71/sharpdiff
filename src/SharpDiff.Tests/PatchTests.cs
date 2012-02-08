@@ -11,7 +11,7 @@ namespace SharpDiff.Tests
         public void EmptyFileWithOneAdditionReturnsTheOneLine()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(0, 0), new ChangeRange(1, 1)), new[] {
@@ -33,7 +33,7 @@ namespace SharpDiff.Tests
         public void EmptyFileWithTwoAdditionReturnsBothLines()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(0, 0), new ChangeRange(1, 2)), new[]
@@ -57,7 +57,7 @@ namespace SharpDiff.Tests
         public void TwoLineFileWithOneLineAddedAtTop()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(1, 2), new ChangeRange(1, 3)), new ISnippet[]
@@ -95,7 +95,7 @@ namespace SharpDiff.Tests
         public void TwoLineFileWithLastLineRemoved()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(1, 2), new ChangeRange(1, 1)), new ISnippet[]
@@ -129,7 +129,7 @@ namespace SharpDiff.Tests
         public void TwoLineFileWithBothLinesRemoved()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(1, 2), new ChangeRange(0, 0)), new[]
@@ -159,7 +159,7 @@ namespace SharpDiff.Tests
         public void AdditionsAndRemovalsInSingleFile()
         {
             var patch = new Patch(
-                new Diff(null, new[]
+                new Diff(new DiffHeader(new DiffFormatType("git")), null, null, new[]
                 {
                     new Chunk(
                         new ChunkRange(new ChangeRange(3, 9), new ChangeRange(3, 12)), new ISnippet[]

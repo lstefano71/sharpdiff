@@ -124,6 +124,7 @@
     <Compile Include="PatchMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Parsers\GitDiff\Lines\SubtractionLine.cs" />
+    <Compile Include="Utils\Diff.Item.cs" />
     <Compile Include="Utils\DiffMatchPatch.cs" />
     <Compile Include="Utils\MathertelDiff.cs" />
   </ItemGroup>

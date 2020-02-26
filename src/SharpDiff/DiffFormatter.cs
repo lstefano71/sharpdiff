@@ -18,7 +18,7 @@ namespace SharpDiff.Parsers.GitDiff
     }
     public void ExportAsUnifiedDiff(Stream output)
     {
-      using (var txtout = new StreamWriter(output,Encoding.UTF8,1024,true)) {
+      using (var txtout = new StreamWriter(output,new UTF8Encoding(false),1024,true)) {
         txtout.AutoFlush = false;
         txtout.WriteLine("--- " + chunksHeader.OriginalFile.FileName);
         txtout.WriteLine("+++ " + chunksHeader.NewFile.FileName);

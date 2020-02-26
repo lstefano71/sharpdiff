@@ -123,7 +123,18 @@ namespace SharpDiff
         }
 
         if (lines.Count > 0) {
-          if (previousOperation == Operation.INSERT)
+          if (isModification) {
+            snippets.Add(new ModificationSnippet(
+                lines
+                    .Where(x => x.Type == Operation.DELETE)
+                    .Select(x => new SubtractionLine(x.Text))
+                    .Cast<ILine>(),
+                lines
+                    .Where(x => x.Type == Operation.INSERT)
+                    .Select(x => new AdditionLine(x.Text))
+                    .Cast<ILine>()
+            ));
+          } else if (previousOperation == Operation.INSERT)
             snippets.Add(new AdditionSnippet(lines.Select(x => new AdditionLine(x.Text)).Cast<ILine>()));
           else if (previousOperation == Operation.DELETE)
             snippets.Add(new SubtractionSnippet(lines.Select(x => new SubtractionLine(x.Text)).Cast<ILine>()));

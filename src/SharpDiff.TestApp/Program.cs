@@ -7,7 +7,7 @@ using SharpDiff;
 using SharpDiff.Parsers.GitDiff;
 
 namespace SharpDiff.TestApp {
-    class Program {
+    static class Program {
         static void Main(string[] args) {
             if(args.Length < 1) {
                 Console.WriteLine("Usage: SharpDiff.TestApp.exe file.diff");

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using DiffMatchPatch;
+using My.Utils;
 using Chunk = DiffMatchPatch.Patch;
 using Diff = My.Utils.Diff;
 using Line = DiffMatchPatch.Diff;
@@ -10,6 +11,17 @@ namespace SharpDiff
 {
   public class PatchMaker
   {
+    public IEnumerable<DiffMatchPatch.Patch> MakePatch(string contentOne, string contentTwo)
+    {
+      return MakePatch(contentOne, contentTwo, 3);
+    }
+
+    public IEnumerable<DiffMatchPatch.Patch> MakePatch(string contentOne, string contentTwo, int contextSize)
+    {
+      return MakePatch(contentOne, contentTwo, new CompareOptions() { BomMode = BomMode.Ignore, ContextSize = contextSize });
+    }
+
+
     public IEnumerable<DiffMatchPatch.Patch> MakePatch(string contentOne, string contentTwo, CompareOptions options)
     {
       var changes = My.Utils.Diff.DiffText(contentOne, contentTwo);
@@ -21,7 +33,7 @@ namespace SharpDiff
 
       for (var i = 0; i < changes.Length; i++) {
         var change = changes[i];
-        Diff.Item? nextChange = null;
+        Item? nextChange = null;
 
         if (changes.Length > i + 1)
           nextChange = changes.ElementAtOrDefault(i + 1);
@@ -95,7 +107,7 @@ namespace SharpDiff
       return Min(new[] { small }.Concat(ints.Skip(2)).ToArray());
     }
 
-    static private Chunk CreateChunk(Diff.Item change, CompareOptions options)
+    static private Chunk CreateChunk(Item change, CompareOptions options)
     {
       var chunk = new Chunk {
         Start1 = change.StartA,
@@ -107,9 +119,9 @@ namespace SharpDiff
       return chunk;
     }
 
-    private static int DistanceBetween(My.Utils.Diff.Item change, My.Utils.Diff.Item nextChange)
-    {
-      return nextChange.StartB - change.StartB + change.DeletedB;
-    }
+    //private static int DistanceBetween(Item change, Item nextChange)
+    //{
+    //  return nextChange.StartB - change.StartB + change.DeletedB;
+    //}
   }
 }

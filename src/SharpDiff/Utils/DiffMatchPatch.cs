@@ -182,11 +182,13 @@ namespace DiffMatchPatch
             break;
         }
 
-        text.Append(HttpUtility.UrlEncode(aDiff.Text,
-            new UTF8Encoding()).Replace('+', ' ')).Append("\n");
+        //text.Append(HttpUtility.UrlEncode(aDiff.Text,
+        //    new UTF8Encoding()).Replace('+', ' ')).Append("\n");
+        text.AppendLine(aDiff.Text);
       }
 
-      return DiffMatchPath.UnescapeForEncodeUriCompatibility(text.ToString());
+      //return DiffMatchPath.UnescapeForEncodeUriCompatibility(text.ToString());
+      return text.ToString();
     }
   }
 

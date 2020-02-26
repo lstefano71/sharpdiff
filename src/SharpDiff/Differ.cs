@@ -34,7 +34,7 @@ namespace SharpDiff
 
     internal static IEnumerable<string> SplitGitDiffs(string diffContent)
     {
-      string regex = @"(?<=\r\n|\n)(?=diff --git)";
+      const string regex = @"(?<=\r\n|\n)(?=diff --git)";
       return System.Text.RegularExpressions.Regex.Split(diffContent, regex);
     }
 
@@ -92,13 +92,13 @@ namespace SharpDiff
         foreach (var diff in patch.Diffs) {
           if (previousOperation == null)
             previousOperation = diff.Type;
-          if (previousOperation == Operation.DELETE && diff.Type == Operation.INSERT)
+          if (previousOperation == Operation.DELETE && diff.Type == Operation.INSERT) {
             isModification = true;
-          else if (previousOperation != diff.Type) {
+          } else if (previousOperation != diff.Type) {
             // different operation
-            if (previousOperation == Operation.EQUAL)
+            if (previousOperation == Operation.EQUAL) {
               snippets.Add(new ContextSnippet(lines.Select(x => new ContextLine(x.Text)).Cast<ILine>()));
-            else if (isModification)
+            } else if (isModification) {
               snippets.Add(new ModificationSnippet(
                   lines
                       .Where(x => x.Type == Operation.DELETE)
@@ -109,10 +109,11 @@ namespace SharpDiff
                       .Select(x => new AdditionLine(x.Text))
                       .Cast<ILine>()
               ));
-            else if (previousOperation == Operation.INSERT)
+            } else if (previousOperation == Operation.INSERT) {
               snippets.Add(new AdditionSnippet(lines.Select(x => new AdditionLine(x.Text)).Cast<ILine>()));
-            else if (previousOperation == Operation.DELETE)
+            } else if (previousOperation == Operation.DELETE) {
               snippets.Add(new SubtractionSnippet(lines.Select(x => new SubtractionLine(x.Text)).Cast<ILine>()));
+            }
 
             lines.Clear();
             isModification = false;
@@ -134,12 +135,13 @@ namespace SharpDiff
                     .Select(x => new AdditionLine(x.Text))
                     .Cast<ILine>()
             ));
-          } else if (previousOperation == Operation.INSERT)
+          } else if (previousOperation == Operation.INSERT) {
             snippets.Add(new AdditionSnippet(lines.Select(x => new AdditionLine(x.Text)).Cast<ILine>()));
-          else if (previousOperation == Operation.DELETE)
+          } else if (previousOperation == Operation.DELETE) {
             snippets.Add(new SubtractionSnippet(lines.Select(x => new SubtractionLine(x.Text)).Cast<ILine>()));
-          else
+          } else {
             snippets.Add(new ContextSnippet(lines.Select(x => new ContextLine(x.Text)).Cast<ILine>()));
+          }
         }
 
         chunks.Add(new Chunk(range, snippets));

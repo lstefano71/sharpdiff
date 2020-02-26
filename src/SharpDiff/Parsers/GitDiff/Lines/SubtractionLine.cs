@@ -9,9 +9,9 @@ namespace SharpDiff.Parsers.GitDiff
             Value = value;
         }
 
-        public string Value { get; private set; }
+    public string Value { get; }
 
-        public IEnumerable<LineSpan> Spans
+    public IEnumerable<LineSpan> Spans
         {
             get { return new[] { new LineSpan(Value, LineSpanKind.Equal) }; }
         }

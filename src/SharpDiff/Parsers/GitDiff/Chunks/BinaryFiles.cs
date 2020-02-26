@@ -4,17 +4,15 @@ using System.Linq;
 namespace SharpDiff.Parsers.GitDiff {
 
     public class BinaryFiles {
+    internal string RawFileDefs { get; }
 
-        string rawFileDefs;
-        internal string RawFileDefs { get { return this.rawFileDefs; } }
-
-        Diff diff; // might be required to determine the file names. See DetermineFiles().
+    Diff diff; // might be required to determine the file names. See DetermineFiles().
         internal Diff Diff { set { this.diff = value; } }
 
         public IList<IFile> Files { get { return this.diff.Files; } }
 
         public BinaryFiles(string rawFileDefs) {
-            this.rawFileDefs = rawFileDefs;
+            this.RawFileDefs = rawFileDefs;
         }
     }
 }

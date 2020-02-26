@@ -5,8 +5,8 @@
             this.Mode = mode;
         }
 
-        public HashRange Range { get; private set; }
-        public int? Mode { get; private set; }
+    public HashRange Range { get; }
+    public int? Mode { get; private set; }
     }
 
     public class HashRange {
@@ -15,7 +15,7 @@
             End = end;
         }
 
-        public string Start { get; private set; }
-        public string End { get; private set; }
-    }
+    public string Start { get; }
+    public string End { get; }
+  }
 }

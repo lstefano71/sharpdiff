@@ -102,7 +102,7 @@ namespace SharpDiff
       if (ints.Length == 1)
         return ints[0];
 
-      var small = Math.Min(ints.ElementAt(0), ints.ElementAt(1));
+      var small = Math.Min(ints[0], ints[1]);
 
       return Min(new[] { small }.Concat(ints.Skip(2)).ToArray());
     }

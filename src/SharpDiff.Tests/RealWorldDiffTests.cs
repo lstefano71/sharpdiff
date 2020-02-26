@@ -50,6 +50,7 @@ namespace FluentNHibernate.Specs.Diagnostics
         static DiagnosticResults results;
     }
 }";
+
         const string fileTwoContent = @"using System;
 using FluentNHibernate.Diagnostics;
 using FluentNHibernate.Mapping;
@@ -107,7 +108,7 @@ namespace FluentNHibernate.Specs.Diagnostics
         public void chunk_should_have_correct_new_range()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(10, chunk.NewRange.StartLine);
             Assert.AreEqual(11, chunk.NewRange.LinesAffected);
@@ -117,7 +118,7 @@ namespace FluentNHibernate.Specs.Diagnostics
         public void chunk_should_have_correct_old_range()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(10, chunk.OriginalRange.StartLine);
             Assert.AreEqual(10, chunk.OriginalRange.LinesAffected);
@@ -127,7 +128,7 @@ namespace FluentNHibernate.Specs.Diagnostics
         public void chunk_should_have_correct_number_of_snippets()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(5, chunk.Snippets.Count());
         }
@@ -136,7 +137,7 @@ namespace FluentNHibernate.Specs.Diagnostics
         public void chunk_should_have_correct_snippets()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
             var snippets = chunk.Snippets;
 
             var firstContext = snippets.ElementAtOrDefault(0) as ContextSnippet;

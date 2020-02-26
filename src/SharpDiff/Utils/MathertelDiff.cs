@@ -6,10 +6,12 @@
   using System.Text.RegularExpressions;
 
   /// <summary>
+  /// <para>
   /// This Class implements the Difference Algorithm published in
   /// "An O(ND) Difference Algorithm and its Variations" by Eugene Myers
   /// Algorithmica Vol. 1 No. 2, 1986, p 251.  
-  /// 
+  /// </para>
+  /// <para>
   /// There are many C, Java, Lisp implementations public available but they all seem to come
   /// from the same source (diffutils) that is under the (unfree) GNU public License
   /// and cannot be reused as a sourcecode for a commercial application.
@@ -21,10 +23,12 @@
   /// make it avaliable without the GNU license limitations.
   /// I do not need a high performance diff tool because it is used only sometimes.
   /// I will do some performace tweaking when needed.
-  /// 
+  /// </para>
+  /// <para>
   /// The algorithm itself is comparing 2 arrays of numbers so when comparing 2 text documents
   /// each line is converted into a (hash) number. See DiffText(). 
-  /// 
+  /// </para>
+  /// <para>
   /// Some chages to the original algorithm:
   /// The original algorithm was described using a recursive approach and comparing zero indexed arrays.
   /// Extracting sub-arrays and rejoining them is very performance and memory intensive so the same
@@ -32,10 +36,12 @@
   /// This circumstance makes the LCS and SMS functions more complicate.
   /// I added some code to the LCS function to get a fast response on sub-arrays that are identical,
   /// completely deleted or inserted.
-  /// 
+  /// </para>
+  /// <para>
   /// The result from a comparisation is stored in 2 arrays that flag for modified (deleted or inserted)
   /// lines in the 2 data arrays. These bits are then analysed to produce a array of Item objects.
-  /// 
+  /// </para>
+  /// <para>
   /// Further possible optimizations:
   /// (first rule: don't do it; second: don't do it yet)
   /// The arrays DataA and DataB are passed as parameters, but are never changed after the creation
@@ -45,11 +51,13 @@
   /// The DownVector and UpVector arrays are alywas created and destroyed each time the SMS gets called.
   /// It is possible to reuse tehm when transfering them to members of the class.
   /// See TODO: hints.
-  /// 
+  /// </para>
+  /// <para>
   /// diff.cs: A port of the algorythm to C#
   /// Copyright (c) by Matthias Hertel, http://www.mathertel.de
   /// This work is licensed under a BSD style license. See http://www.mathertel.de/License.aspx
-  /// 
+  /// </para>
+  /// <para>
   /// Changes:
   /// 2002.09.20 There was a "hang" in some situations.
   /// Now I undestand a little bit more of the SMS algorithm. 
@@ -57,13 +65,14 @@
   /// One return-point is enough.
   /// A assertion was added in CreateDiffs when in debug-mode, that counts the number of equal (no modified) lines in both arrays.
   /// They must be identical.
-  /// 
+  /// </para>
+  /// <para>
   /// 2003.02.07 Out of bounds error in the Up/Down vector arrays in some situations.
   /// The two vetors are now accessed using different offsets that are adjusted using the start k-Line. 
   /// A test case is added. 
-  /// 
-  /// 2006.03.05 Some documentation and a direct Diff entry point.
-  /// 
+  /// </para>
+  /// <para>2006.03.05 Some documentation and a direct Diff entry point.</para>
+  /// <para>
   /// 2006.03.08 Refactored the API to static methods on the Diff class to make usage simpler.
   /// 2006.03.10 using the standard Debug class for self-test now.
   ///            compile with: csc /target:exe /out:diffTest.exe /d:DEBUG /d:TRACE /d:SELFTEST Diff.cs
@@ -72,6 +81,7 @@
   /// 2007.09.23 UpVector and DownVector optimization by Jan Stoklasa ().
   /// 2008.05.31 Adjusted the testing code that failed because of the Optimize method (not a bug in the diff algorithm).
   /// 2008.10.08 Fixing a test case and adding a new test case.
+  /// </para>
   /// </summary>
 
   public static partial class Diff
@@ -84,7 +94,6 @@
       internal int x, y;
       // internal int u, v;  // 2002.09.20: no need for 2 points 
     }
-
 
     #region self-Test
 
@@ -183,7 +192,6 @@
 #endif
     #endregion
 
-
     /// <summary>
     /// Find the difference in 2 texts, comparing by textlines.
     /// </summary>
@@ -192,9 +200,8 @@
     /// <returns>Returns a array of Items that describe the differences.</returns>
     public static Item[] DiffText(string TextA, string TextB)
     {
-      return (DiffText(TextA, TextB, false, false, false));
+      return DiffText(TextA, TextB, false, false, false);
     } // DiffText
-
 
     /// <summary>
     /// Find the difference in 2 text documents, comparing by textlines.
@@ -222,9 +229,9 @@
 
       int MAX = DataA.Length + DataB.Length + 1;
       /// vector for the (0,0) to (x,y) search
-      int[] DownVector = new int[2 * MAX + 2];
+      int[] DownVector = new int[(2 * MAX) + 2];
       /// vector for the (u,v) to (N,M) search
-      int[] UpVector = new int[2 * MAX + 2];
+      int[] UpVector = new int[(2 * MAX) + 2];
 
       LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length, DownVector, UpVector);
 
@@ -232,7 +239,6 @@
       Optimize(DataB);
       return CreateDiffs(DataA, DataB);
     } // DiffText
-
 
     /// <summary>
     /// If a sequence of modified lines starts with a line that contains the same content
@@ -247,10 +253,10 @@
 
       StartPos = 0;
       while (StartPos < Data.Length) {
-        while ((StartPos < Data.Length) && (Data.modified[StartPos] == false))
+        while ((StartPos < Data.Length) && (!Data.modified[StartPos]))
           StartPos++;
         EndPos = StartPos;
-        while ((EndPos < Data.Length) && (Data.modified[EndPos] == true))
+        while ((EndPos < Data.Length) && Data.modified[EndPos])
           EndPos++;
 
         if ((EndPos < Data.Length) && (Data.data[StartPos] == Data.data[EndPos])) {
@@ -261,7 +267,6 @@
         } // if
       } // while
     } // Optimize
-
 
     /// <summary>
     /// Find the difference in 2 arrays of integers.
@@ -279,14 +284,13 @@
 
       int MAX = DataA.Length + DataB.Length + 1;
       /// vector for the (0,0) to (x,y) search
-      int[] DownVector = new int[2 * MAX + 2];
+      int[] DownVector = new int[(2 * MAX) + 2];
       /// vector for the (u,v) to (N,M) search
-      int[] UpVector = new int[2 * MAX + 2];
+      int[] UpVector = new int[(2 * MAX) + 2];
 
       LCS(DataA, 0, DataA.Length, DataB, 0, DataB.Length, DownVector, UpVector);
       return CreateDiffs(DataA, DataB);
     } // Diff
-
 
     /// <summary>
     /// This function converts all textlines of the text into unique numbers for every unique textline
@@ -332,9 +336,8 @@
           Codes[i] = (int)aCode;
         } // if
       } // for
-      return (Codes);
+      return Codes;
     } // DiffCodes
-
 
     /// <summary>
     /// This is the algorithm to find the Shortest Middle Snake (SMS).
@@ -351,14 +354,13 @@
     private static SMSRD SMS(DiffData DataA, int LowerA, int UpperA, DiffData DataB, int LowerB, int UpperB,
       int[] DownVector, int[] UpVector)
     {
-
       SMSRD ret;
       int MAX = DataA.Length + DataB.Length + 1;
 
       int DownK = LowerA - LowerB; // the k-line to start the forward search
       int UpK = UpperA - UpperB; // the k-line to start the reverse search
 
-      int Delta = (UpperA - LowerA) - (UpperB - LowerB);
+      int Delta = UpperA - LowerA - (UpperB - LowerB);
       bool oddDelta = (Delta & 1) != 0;
 
       // The vectors in the publication accepts negative indexes. the vectors implemented here are 0-based
@@ -375,7 +377,6 @@
       UpVector[UpOffset + UpK - 1] = UpperA;
 
       for (int D = 0; D <= MaxD; D++) {
-
         // Extend the forward path.
         for (int k = DownK - D; k <= DownK + D; k += 2) {
           // Debug.Write(0, "SMS", "extend forward path " + k.ToString());
@@ -404,10 +405,9 @@
               ret.y = DownVector[DownOffset + k] - k;
               // ret.u = UpVector[UpOffset + k];      // 2002.09.20: no need for 2 points 
               // ret.v = UpVector[UpOffset + k] - k;
-              return (ret);
+              return ret;
             } // if
           } // if
-
         } // for k
 
         // Extend the reverse path.
@@ -437,17 +437,14 @@
               ret.y = DownVector[DownOffset + k] - k;
               // ret.u = UpVector[UpOffset + k];     // 2002.09.20: no need for 2 points 
               // ret.v = UpVector[UpOffset + k] - k;
-              return (ret);
+              return ret;
             } // if
           } // if
-
         } // for k
-
       } // for D
 
       throw new ApplicationException("the algorithm should never come here.");
     } // SMS
-
 
     /// <summary>
     /// This is the divide-and-conquer implementation of the longes common-subsequence (LCS) 
@@ -481,12 +478,10 @@
         // mark as inserted lines.
         while (LowerB < UpperB)
           DataB.modified[LowerB++] = true;
-
       } else if (LowerB == UpperB) {
         // mark as deleted lines.
         while (LowerA < UpperA)
           DataA.modified[LowerA++] = true;
-
       } else {
         // Find the middle snakea and length of an optimal path for A and B
         SMSRD smsrd = SMS(DataA, LowerA, UpperA, DataB, LowerB, UpperB, DownVector, UpVector);
@@ -497,7 +492,6 @@
         LCS(DataA, smsrd.x, UpperA, DataB, smsrd.y, UpperB, DownVector, UpVector);  // 2002.09.20: no need for 2 points 
       }
     } // LCS()
-
 
     /// <summary>Scan the tables of which lines are inserted and deleted,
     /// producing an edit script in forward order.  
@@ -520,19 +514,20 @@
           // equal lines
           LineA++;
           LineB++;
-
         } else {
           // maybe deleted and/or inserted lines
           StartA = LineA;
           StartB = LineB;
 
-          while (LineA < DataA.Length && (LineB >= DataB.Length || DataA.modified[LineA]))
+          while (LineA < DataA.Length && (LineB >= DataB.Length || DataA.modified[LineA])) {
             // while (LineA < DataA.Length && DataA.modified[LineA])
             LineA++;
+          }
 
-          while (LineB < DataB.Length && (LineA >= DataA.Length || DataB.modified[LineB]))
+          while (LineB < DataB.Length && (LineA >= DataA.Length || DataB.modified[LineB])) {
             // while (LineB < DataB.Length && DataB.modified[LineB])
             LineB++;
+          }
 
           if ((StartA < LineA) || (StartB < LineB)) {
             // store a new difference-item
@@ -550,16 +545,14 @@
       result = new Item[a.Count];
       a.CopyTo(result);
 
-      return (result);
+      return result;
     }
-
   } // class Diff
 
   /// <summary>Data on one input file being compared.  
   /// </summary>
   internal class DiffData
   {
-
     /// <summary>Number of elements (lines).</summary>
     internal int Length;
 
@@ -583,7 +576,5 @@
       Length = initData.Length;
       modified = new bool[Length + 2];
     } // DiffData
-
   } // class DiffData
-
 } // namespace

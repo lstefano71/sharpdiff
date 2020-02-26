@@ -16,7 +16,7 @@ namespace SharpDiff.Parsers.GitDiff {
             Kind = kind;
         }
 
-        public string Value { get; private set; }
-        public LineSpanKind Kind { get; private set; }
-    }
+    public string Value { get; }
+    public LineSpanKind Kind { get; }
+  }
 }

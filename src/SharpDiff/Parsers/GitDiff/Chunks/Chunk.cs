@@ -22,6 +22,6 @@ namespace SharpDiff.Parsers.GitDiff
             get { return range.NewRange; }
         }
 
-        public IEnumerable<ISnippet> Snippets { get; private set; }
-    }
+    public IEnumerable<ISnippet> Snippets { get; }
+  }
 }

@@ -18,10 +18,12 @@
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:DiffMatchPatch.DiffMatchPath.PatchMake(System.String,System.String,System.Collections.Generic.List{DiffMatchPatch.Diff})~System.Collections.Generic.List{DiffMatchPatch.Patch}")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1031:Do not catch general exception types", Justification = "<Pending>", Scope = "member", Target = "~M:DiffMatchPatch.DiffMatchPath.PatchFromText(System.String)~System.Collections.Generic.List{DiffMatchPatch.Patch}")]
 
-
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "SharpDiff")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "DiffMatchPatch")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1062:Validate arguments of public methods", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "My.Utils")]
 
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters", MessageId = "0#", Scope = "namespaceanddescendants", Target = "SharpDiff")]
 [assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1040:Avoid empty interfaces", Justification = "<Pending>", Scope = "type", Target = "~T:SharpDiff.Parsers.GitDiff.IHeader")]
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Redundancy", "RCS1036:Remove redundant empty line.", Justification = "<Pending>", Scope = "namespaceanddescendants", Target = "SharpDiff")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0059:Unnecessary assignment of a value", Justification = "<Pending>", Scope = "member", Target = "~M:SharpDiff.Parsers.GitDiff.DiffHeader.#ctor(SharpDiff.Parsers.GitDiff.DiffFormatType,System.Collections.Generic.IEnumerable{SharpDiff.Parsers.GitDiff.IFile})")]

@@ -1,0 +1,9 @@
+﻿// This file is used by Code Analysis to maintain SuppressMessage
+// attributes that are applied to this project.
+// Project-level suppressions either have no target or are given
+// a specific target and scoped to a namespace, type, member, etc.
+
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpDiff.Tests.AbstractParserTestFixture.Parse``1(System.String,System.Func{SharpDiff.Parsers.GitDiff.GitDiffParser,OMetaSharp.Rule{System.Char}})~``0")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpDiff.Tests.Numstat.FileStatsTests.Parse``1(System.String,System.Func{SharpDiff.Parsers.GitNumstat.GitNumstatParser,OMetaSharp.Rule{System.Char}})~``0")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpDiff.Tests.Numstat.FileStatsTests.ParseList``1(System.String,System.Func{SharpDiff.Parsers.GitNumstat.GitNumstatParser,OMetaSharp.Rule{System.Char}})~System.Collections.Generic.IList{``0}")]
+[assembly: System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:SharpDiff.Tests.AbstractParserTestFixture.ParseList``1(System.String,System.Func{SharpDiff.Parsers.GitDiff.GitDiffParser,OMetaSharp.Rule{System.Char}})~System.Collections.Generic.IEnumerable{``0}")]

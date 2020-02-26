@@ -51,6 +51,7 @@ namespace SharpDiff.Parsers.GitDiff
     {
       get { return diffHeader.IsNewFile; }
     }
+
     public bool IsDeletion
     {
       get { return diffHeader.IsDeletion; }
@@ -60,6 +61,7 @@ namespace SharpDiff.Parsers.GitDiff
     {
       get { return this.chunks != null; }
     }
+
     public bool IsBinary
     {
       get { return this.binaryFiles != null; }

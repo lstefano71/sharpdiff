@@ -74,7 +74,6 @@ namespace SharpDiff.Tests
                         })
           })
       ) {
-
         // @@ -1,2 +1,3 @@
         // +A LINE!
         //  original first line
@@ -112,7 +111,6 @@ namespace SharpDiff.Tests
                         }),
           })
       ) {
-
         // @@ -1,2 +1,1 @@
         //  hello
         // -there
@@ -144,7 +142,6 @@ namespace SharpDiff.Tests
                         }),
           })
       ) {
-
         // @@ -1,2 +0,0 @@
         // -hello
         // -there
@@ -201,7 +198,6 @@ namespace SharpDiff.Tests
                         }),
           })
       ) {
-
         //@@ -3,9 +3,12 @@
         // this
         // is

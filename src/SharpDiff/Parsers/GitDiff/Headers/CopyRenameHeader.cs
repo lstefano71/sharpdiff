@@ -6,8 +6,8 @@
             this.FileName = fileName;
         }
 
-        public string Transaction { get; private set; }
-        public string Direction { get; private set; }
-        public string FileName { get; private set; }
-    }
+    public string Transaction { get; }
+    public string Direction { get; }
+    public string FileName { get; }
+  }
 }

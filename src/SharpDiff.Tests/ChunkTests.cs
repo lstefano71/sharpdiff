@@ -47,7 +47,7 @@ namespace SharpDiff.Tests
 
             Assert.That(result.Snippets, Is.Not.Null);
             Assert.That(result.Snippets, Has.Count.EqualTo(2));
-            
+
             Assert.That(result.Snippets.ElementAt(0), Is.TypeOf<ContextSnippet>());
             Assert.That(result.Snippets.ElementAt(1), Is.TypeOf<ModificationSnippet>());
 

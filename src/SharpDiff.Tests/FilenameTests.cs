@@ -32,7 +32,7 @@ namespace SharpDiff.Tests
     {
       // TODO
 
-      var rawFileDefs = "a/Filename b/Second.txt";
+      const string rawFileDefs = "a/Filename b/Second.txt";
       var helper = new Diff.DetermineFileDefNamesHelper(rawFileDefs);
       var list = helper.GetHeaderFiles();
 

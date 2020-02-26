@@ -24,7 +24,7 @@ namespace SharpDiff.TestApp {
                 //l.Add(diff);
                 Console.Write("+ {0} files", diff.Files.Count);
                 if(diff.HasChunks) {
-                    Console.WriteLine(", {0} chunks", diff.Chunks.Count());
+                    Console.WriteLine(", {0} chunks", diff.Chunks.Count);
                     foreach(var chunk in diff.Chunks) {
                         Console.WriteLine("  + {0} snippets", chunk.Snippets.Count());
                     }

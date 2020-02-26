@@ -14,8 +14,8 @@ namespace SharpDiff.Parsers.GitNumstat
             Filename = filename;
         }
 
-        public int Additions { get; private set; }
-        public int Subtractions { get; private set; }
-        public string Filename { get; private set; }
-    }
+    public int Additions { get; }
+    public int Subtractions { get; }
+    public string Filename { get; }
+  }
 }

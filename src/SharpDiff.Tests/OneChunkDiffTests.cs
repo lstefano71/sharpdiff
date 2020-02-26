@@ -22,7 +22,7 @@ namespace SharpDiff.Tests
         public void chunk_should_have_correct_new_range()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(1, chunk.NewRange.StartLine);
             Assert.AreEqual(8, chunk.NewRange.LinesAffected);
@@ -32,7 +32,7 @@ namespace SharpDiff.Tests
         public void chunk_should_have_correct_old_range()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(1, chunk.OriginalRange.StartLine);
             Assert.AreEqual(6, chunk.OriginalRange.LinesAffected);
@@ -42,7 +42,7 @@ namespace SharpDiff.Tests
         public void chunk_should_have_correct_number_of_snippets()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
 
             Assert.AreEqual(4, chunk.Snippets.Count());
         }
@@ -51,7 +51,7 @@ namespace SharpDiff.Tests
         public void chunk_should_have_correct_snippets()
         {
             var diff = Differ.Compare("one", fileOneContent, "two", fileTwoContent);
-            var chunk = diff.Chunks.First();
+            var chunk = diff.Chunks[0];
             var snippets = chunk.Snippets;
 
             var firstAddition = snippets.ElementAtOrDefault(0) as AdditionSnippet;

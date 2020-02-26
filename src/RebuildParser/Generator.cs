@@ -9,7 +9,7 @@ namespace SharpDiff.Utils.RebuildParser
         static void Main()
         {
             var generator = new Program();
-            
+
             generator.RebuildGitParser();
             generator.RebuildGitNumstatParser();
         }

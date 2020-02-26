@@ -83,6 +83,7 @@
     <Compile Include="ChunkRangeTests.cs" />
     <Compile Include="ChunkTests.cs" />
     <Compile Include="DeletedFileDiffTests.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="NewFileDiffTests.cs" />
     <Compile Include="OneChunkDiffTests.cs" />
     <Compile Include="RealWorldDiffTests.cs" />

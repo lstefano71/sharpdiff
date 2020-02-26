@@ -8,7 +8,7 @@ namespace SharpDiff.Parsers.GitDiff
             FileName = filename;
         }
 
-        public char Letter { get; private set; }
-        public string FileName { get; private set; }
-    }
+    public char Letter { get; }
+    public string FileName { get; }
+  }
 }

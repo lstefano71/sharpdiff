@@ -16,6 +16,7 @@ namespace SharpDiff.Parsers.GitDiff
         return System.Text.Encoding.UTF8.GetString(s.ToArray());
       }
     }
+
     public void ExportAsUnifiedDiff(Stream output)
     {
       using (var txtout = new StreamWriter(output,new UTF8Encoding(false),1024,true)) {
@@ -54,6 +55,7 @@ namespace SharpDiff.Parsers.GitDiff
       if (l is SubtractionLine) return "-";
       return " ";
     }
+
     static private string PrefixForModified(ILine l)
     {
       if (l is AdditionLine) return "+";

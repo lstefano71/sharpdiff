@@ -8,7 +8,7 @@ namespace SharpDiff.Parsers.GitDiff
             NewRange = newRange;
         }
 
-        public ChangeRange OriginalRange { get; private set; }
-        public ChangeRange NewRange { get; private set; }
-    }
+    public ChangeRange OriginalRange { get; }
+    public ChangeRange NewRange { get; }
+  }
 }

@@ -5,7 +5,7 @@
             this.Index = index;
         }
 
-        public string Kind { get; private set; }
-        public int Index { get; private set; }
-    }
+    public string Kind { get; }
+    public int Index { get; }
+  }
 }

@@ -7,11 +7,13 @@
   {
     /// <summary>Start Line number in Data A.</summary>
     public int StartA { get; set; }
+
     /// <summary>Start Line number in Data B.</summary>
     public int StartB { get; set; }
 
     /// <summary>Number of changes in Data A.</summary>
     public int DeletedA { get; set; }
+
     /// <summary>Number of changes in Data B.</summary>
     public int DeletedB { get; set; }
 
@@ -31,10 +33,10 @@
     public override int GetHashCode()
     {
       var hashCode = 643693650;
-      hashCode = hashCode * -1521134295 + StartA.GetHashCode();
-      hashCode = hashCode * -1521134295 + StartB.GetHashCode();
-      hashCode = hashCode * -1521134295 + DeletedA.GetHashCode();
-      hashCode = hashCode * -1521134295 + DeletedB.GetHashCode();
+      hashCode = (hashCode * -1521134295) + StartA.GetHashCode();
+      hashCode = (hashCode * -1521134295) + StartB.GetHashCode();
+      hashCode = (hashCode * -1521134295) + DeletedA.GetHashCode();
+      hashCode = (hashCode * -1521134295) + DeletedB.GetHashCode();
       return hashCode;
     }
 

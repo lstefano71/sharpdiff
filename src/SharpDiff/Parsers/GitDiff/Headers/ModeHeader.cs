@@ -4,8 +4,8 @@
             this.Kind = kind;
             this.Mode = mode;
         }
-        
-        public string Kind { get; private set; }
-        public int Mode { get; private set; }
-    }
+
+    public string Kind { get; }
+    public int Mode { get; }
+  }
 }

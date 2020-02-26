@@ -13,9 +13,9 @@ namespace SharpDiff.Parsers.GitDiff
 
         public string Value
         {
-            get { return String.Join("", Spans.Select(x => x.Value).ToArray()) ; }
+            get { return string.Concat(Spans.Select(x => x.Value).ToArray()) ; }
         }
 
-        public IEnumerable<LineSpan> Spans { get; private set; }
-    }
+    public IEnumerable<LineSpan> Spans { get; }
+  }
 }

@@ -9,31 +9,30 @@ namespace SharpDiff.Parsers.GitDiff {
             if(this.files == null) {
                 DetermineFileDefNamesHelper helper = new DetermineFileDefNamesHelper(this.diffHeader.RawFileDefs);
 
-                // the diff's files:
+        // the diff's files:
 
-                CopyRenameHeader from, to;
-                // if there is a ChunksHeader, it contains the files
-                if(this.chunksHeader != null) {
-                    this.files = new IFile[] { chunksHeader.OriginalFile, chunksHeader.NewFile };
-                }
-                // if there are copy/rename headers, they contain the file names
-                else if(GetCopyRenameHeaders(out from, out to)) {
-                    this.files = new IFile[] { new File('a', from.FileName), new File('b', to.FileName) };
-                }
-                // if there is a BinaryFiles, we can utilize its RawFileDefs
-                else if(this.binaryFiles != null) {
-                    this.files = helper.GetDiffFilesFromBinaryFiles(this.binaryFiles.RawFileDefs);
-                }
-                // else a completely empty file was added or deleted. in this case the file names in the header are identical
-                else {
-                    this.files = helper.GetIdenticalHeaderFiles();
-                    if(this.files == null) {
-                        System.Diagnostics.Trace.TraceWarning("Unable to determine diff file names. Defaulting to NullFiles.");
-                        this.files = new IFile[] { new NullFile(), new NullFile() };
-                    }
-                }
+        // if there is a ChunksHeader, it contains the files
+        if (this.chunksHeader != null) {
+          this.files = new IFile[] { chunksHeader.OriginalFile, chunksHeader.NewFile };
+        }
+        // if there are copy/rename headers, they contain the file names
+        else if (GetCopyRenameHeaders(out CopyRenameHeader from, out CopyRenameHeader to)) {
+          this.files = new IFile[] { new File('a', from.FileName), new File('b', to.FileName) };
+        }
+        // if there is a BinaryFiles, we can utilize its RawFileDefs
+        else if (this.binaryFiles != null) {
+          this.files = helper.GetDiffFilesFromBinaryFiles(this.binaryFiles.RawFileDefs);
+        }
+        // else a completely empty file was added or deleted. in this case the file names in the header are identical
+        else {
+          this.files = helper.GetIdenticalHeaderFiles();
+          if (this.files == null) {
+            System.Diagnostics.Trace.TraceWarning("Unable to determine diff file names. Defaulting to NullFiles.");
+            this.files = new IFile[] { new NullFile(), new NullFile() };
+          }
+        }
 
-                helper.diffFiles = this.files;
+        helper.diffFiles = this.files;
 
                 // the diff header's files ('a/<file name> b/<file name>')
                 helper.GetHeaderFiles();
@@ -49,7 +48,7 @@ namespace SharpDiff.Parsers.GitDiff {
              * such substitution then the whole pathname is put in double quotes.
              */
 
-            protected List<KeyValuePair<string, string>> headerSplitCandidates;
+            List<KeyValuePair<string, string>> headerSplitCandidates;
             internal IList<IFile> diffFiles;
 
             public DetermineFileDefNamesHelper(string headerRawFileDefs) {
@@ -129,7 +128,7 @@ namespace SharpDiff.Parsers.GitDiff {
                 // See IsValidFileDef for valid values of <file def>.
 
                 // 1. remove ' differ' from the end
-                int index = rawFileDefs.IndexOf(" differ");
+                int index = rawFileDefs.IndexOf(" differ",StringComparison.InvariantCulture);
                 if(index != -1) {
                     rawFileDefs = rawFileDefs.Substring(0, index);
                 } else {
@@ -140,7 +139,7 @@ namespace SharpDiff.Parsers.GitDiff {
                 var candidates = new List<KeyValuePair<string, string>>(1);
                 index = 0;
                 while(true) {
-                    index = rawFileDefs.IndexOf(" and ", index);
+                    index = rawFileDefs.IndexOf(" and ", index, StringComparison.InvariantCulture);
                     if(index == -1) break;
                     string filename1 = rawFileDefs.Substring(0, index);
                     string filename2 = rawFileDefs.Substring(index + 5 /* " and ".Length */);
@@ -208,18 +207,18 @@ namespace SharpDiff.Parsers.GitDiff {
             // A <file name> may contain spaces, must not be empty and must not end with '/'.
             // At most one file def may be NullFile.NAME.
             public static bool AreValidFileDefs(string candidate1, string candidate2, bool mayBeNull = true) {
-                bool candidate1IsNull, candidate2IsNull;
-                return IsValidFileDef(candidate1, true, mayBeNull, out candidate1IsNull) &&
-                   IsValidFileDef(candidate2, false, mayBeNull, out candidate2IsNull) &&
-                   !(candidate1IsNull && candidate2IsNull);
-            }
+        return IsValidFileDef(candidate1, true, mayBeNull, out bool candidate1IsNull) &&
+           IsValidFileDef(candidate2, false, mayBeNull, out bool candidate2IsNull) &&
+           !(candidate1IsNull && candidate2IsNull);
+      }
             public static bool IsValidFileDef(string candidate, bool isFirst, bool mayBeNull, out bool isNull) {
                 isNull = false;
                 if(mayBeNull && candidate == NullFile.NAME) {
                     isNull = true;
                     return true;
-                } else if((isFirst && candidate.StartsWith("a/")) || (!isFirst && candidate.StartsWith("b/"))) {
-                    if(candidate.Length > 2 && !candidate.EndsWith("/")) {
+                } else if((isFirst && candidate.StartsWith("a/", StringComparison.InvariantCulture)) 
+                         || (!isFirst && candidate.StartsWith("b/", StringComparison.InvariantCulture))) {
+                    if(candidate.Length > 2 && !candidate.EndsWith("/", StringComparison.InvariantCulture)) {
                         return true;
                     }
                 }

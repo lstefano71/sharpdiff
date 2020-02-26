@@ -2076,7 +2076,7 @@ namespace SharpDiff.Parsers.GitDiff
                         return MetaRules.Fail(out result2, out modifiedStream2);
                     }
                     ds = result2;
-                    result2 = ( int.Parse(ds.As<string>()) ).AsHostExpressionList();
+                    result2 = ( int.Parse(ds.As<string>(),System.Globalization.CultureInfo.InvariantCulture) ).AsHostExpressionList();
                     return MetaRules.Success();
                 }, modifiedStream, out result, out modifiedStream))
             {

@@ -53,13 +53,13 @@ namespace SharpDiff.Parsers.GitDiff
 
         static IEnumerable<LineSpan> DiffInline(ILine originalLine, ILine modifiedLine)
         {
-            var dmp = new diff_match_patch();
-            var diffs = dmp.diff_main(originalLine.Value, modifiedLine.Value);
+            var dmp = new DiffMatchPath();
+            var diffs = dmp.DiffMain(originalLine.Value, modifiedLine.Value);
 
-            dmp.diff_cleanupSemantic(diffs);
+            dmp.DiffCleanupSmentic(diffs);
 
             return diffs
-                .Select(x => new LineSpan(x.text, OperationToKind(x.operation)))
+                .Select(x => new LineSpan(x.Text, OperationToKind(x.Type)))
                 .ToArray();
         }
 

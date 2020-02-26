@@ -5,23 +5,23 @@ namespace SharpDiff.Parsers.GitDiff
 {
     public class DiffHeader
     {
-        protected string rawFileDefs;
+        string rawFileDefs;
         internal string RawFileDefs {
             get { return this.rawFileDefs; }
         }
 
-        protected Diff diff; // might be required to determine the file names.
+        Diff diff; // might be required to determine the file names.
         internal Diff Diff {
             set { this.diff = value; }
         }
 
-        protected IList<IFile> files;
+        IList<IFile> files;
 
         public DiffHeader(DiffFormatType format)
-            : this(format, new IFile[0]) { }
+            : this(format, Array.Empty<IFile>()) { }
 
         public DiffHeader(DiffFormatType format, string rawFileDefs)
-            : this(format, new IFile[0]) {
+            : this(format, Array.Empty<IFile>()) {
             this.rawFileDefs = rawFileDefs;
         }
 

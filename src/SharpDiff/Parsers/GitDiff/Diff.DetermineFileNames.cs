@@ -9,33 +9,33 @@ namespace SharpDiff.Parsers.GitDiff
 
     internal void DetermineFileNames()
     {
-      if (this.files == null) {
-        DetermineFileDefNamesHelper helper = new DetermineFileDefNamesHelper(this.diffHeader.RawFileDefs);
+      if (files == null) {
+        DetermineFileDefNamesHelper helper = new DetermineFileDefNamesHelper(diffHeader.RawFileDefs);
 
         // the diff's files:
 
         // if there is a ChunksHeader, it contains the files
-        if (this.chunksHeader != null) {
-          this.files = new IFile[] { chunksHeader.OriginalFile, chunksHeader.NewFile };
+        if (chunksHeader != null) {
+          files = new IFile[] { chunksHeader.OriginalFile, chunksHeader.NewFile };
         }
         // if there are copy/rename headers, they contain the file names
         else if (GetCopyRenameHeaders(out CopyRenameHeader from, out CopyRenameHeader to)) {
-          this.files = new IFile[] { new File('a', from.FileName), new File('b', to.FileName) };
+          files = new IFile[] { new File('a', from.FileName), new File('b', to.FileName) };
         }
         // if there is a BinaryFiles, we can utilize its RawFileDefs
-        else if (this.binaryFiles != null) {
-          this.files = helper.GetDiffFilesFromBinaryFiles(this.binaryFiles.RawFileDefs);
+        else if (binaryFiles != null) {
+          files = helper.GetDiffFilesFromBinaryFiles(binaryFiles.RawFileDefs);
         }
         // else a completely empty file was added or deleted. in this case the file names in the header are identical
         else {
-          this.files = helper.GetIdenticalHeaderFiles();
-          if (this.files == null) {
+          files = helper.GetIdenticalHeaderFiles();
+          if (files == null) {
             System.Diagnostics.Trace.TraceWarning("Unable to determine diff file names. Defaulting to NullFiles.");
-            this.files = new IFile[] { new NullFile(), new NullFile() };
+            files = new IFile[] { new NullFile(), new NullFile() };
           }
         }
 
-        helper.diffFiles = this.files;
+        helper.diffFiles = files;
 
         // the diff header's files ('a/<file name> b/<file name>')
         helper.GetHeaderFiles();
@@ -57,7 +57,7 @@ namespace SharpDiff.Parsers.GitDiff
 
       public DetermineFileDefNamesHelper(string headerRawFileDefs)
       {
-        this.SplitHeader(headerRawFileDefs);
+        SplitHeader(headerRawFileDefs);
       }
 
       public DetermineFileDefNamesHelper(DiffHeader header) : this(header.RawFileDefs) { }
@@ -65,7 +65,7 @@ namespace SharpDiff.Parsers.GitDiff
       public void SplitHeader(string headerRawFileDefs)
       {
         // gather all candidate splittings for the diff header file names
-        this.headerSplitCandidates = new List<KeyValuePair<string, string>>(1);
+        headerSplitCandidates = new List<KeyValuePair<string, string>>(1);
         for (int index = 0; ; index++) {
           index = headerRawFileDefs.IndexOf(' ', index);
           if (index == -1) break;
@@ -89,11 +89,11 @@ namespace SharpDiff.Parsers.GitDiff
         // if there are spaces in the file name, we must get help from the diff files
         //   (which were determined using other header fields)
         else if (headerSplitCandidates.Count > 1) {
-          if (this.diffFiles == null) {
+          if (diffFiles == null) {
             System.Diagnostics.Trace.TraceError("Missing diff files to determine diff header file names.");
           } else {
-            IFile diffFile1 = this.diffFiles[0];
-            IFile diffFile2 = this.diffFiles[1];
+            IFile diffFile1 = diffFiles[0];
+            IFile diffFile2 = diffFiles[1];
             if (diffFile1 is NullFile) {
               if (diffFile2 is NullFile) {
                 System.Diagnostics.Trace.TraceError("Only one of the diff files may be a NullFile.");
@@ -167,7 +167,7 @@ namespace SharpDiff.Parsers.GitDiff
           //   '<file def> <file def>'
           // Try to find a matching pair of candidates.
           foreach (var candidate in candidates) {
-            if (this.headerSplitCandidates.Any(headerCandidate => CandidatesMatch(candidate.Key, headerCandidate.Key, candidate.Value, headerCandidate.Value))) {
+            if (headerSplitCandidates.Any(headerCandidate => CandidatesMatch(candidate.Key, headerCandidate.Key, candidate.Value, headerCandidate.Value))) {
               files[0] = FileFromFileDef(candidate.Key);
               files[1] = FileFromFileDef(candidate.Value);
               break;

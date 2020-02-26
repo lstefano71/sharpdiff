@@ -35,15 +35,15 @@ namespace SharpDiff.Parsers.GitDiff
       this.binaryFiles.Diff = this; // might help to parse the file names
     }
 
-    public IList<Chunk> Chunks { get { return this.chunks; } }
+    public IList<Chunk> Chunks { get { return chunks; } }
 
     public IList<IFile> Files
     {
       get {
-        if (this.files == null) {
-          this.DetermineFileNames();
+        if (files == null) {
+          DetermineFileNames();
         }
-        return this.files;
+        return files;
       }
     }
 
@@ -59,18 +59,18 @@ namespace SharpDiff.Parsers.GitDiff
 
     public bool HasChunks
     {
-      get { return this.chunks != null; }
+      get { return chunks != null; }
     }
 
     public bool IsBinary
     {
-      get { return this.binaryFiles != null; }
+      get { return binaryFiles != null; }
     }
 
     public bool GetCopyRenameHeaders(out CopyRenameHeader from, out CopyRenameHeader to)
     {
       from = null; to = null;
-      foreach (var header in this.headers) {
+      foreach (var header in headers) {
         if (header is CopyRenameHeader header_) {
           if (header_.Direction == "from") from = header_;
           else if (header_.Direction == "to") to = header_;

@@ -77,8 +77,8 @@ namespace DiffMatchPatch
     public Diff(Operation operation, string text)
     {
       // Construct a diff with the specified operation and text.
-      this.Type = operation;
-      this.Text = text;
+      Type = operation;
+      Text = text;
     }
 
     /**
@@ -87,8 +87,8 @@ namespace DiffMatchPatch
      */
     public override string ToString()
     {
-      string prettyText = this.Text.Replace('\n', '\u00b6');
-      return "Diff(" + this.Type + ",\"" + prettyText + "\")";
+      string prettyText = Text.Replace('\n', '\u00b6');
+      return "Diff(" + Type + ",\"" + prettyText + "\")";
     }
 
     /**
@@ -109,7 +109,7 @@ namespace DiffMatchPatch
       }
 
       // Return true if the fields match.
-      return p.Type == this.Type && p.Text == this.Text;
+      return p.Type == Type && p.Text == Text;
     }
 
     public bool Equals(Diff other)
@@ -120,7 +120,7 @@ namespace DiffMatchPatch
       }
 
       // Return true if the fields match.
-      return other.Type == this.Type && other.Text == this.Text;
+      return other.Type == Type && other.Text == Text;
     }
 
     public override int GetHashCode()
@@ -149,25 +149,25 @@ namespace DiffMatchPatch
     public override string ToString()
     {
       string coords1, coords2;
-      if (this.Length1 == 0) {
-        coords1 = this.Start1 + ",0";
-      } else if (this.Length1 == 1) {
-        coords1 = Convert.ToString(this.Start1 + 1, System.Globalization.CultureInfo.InvariantCulture);
+      if (Length1 == 0) {
+        coords1 = Start1 + ",0";
+      } else if (Length1 == 1) {
+        coords1 = Convert.ToString(Start1 + 1, System.Globalization.CultureInfo.InvariantCulture);
       } else {
-        coords1 = this.Start1 + 1 + "," + this.Length1;
+        coords1 = Start1 + 1 + "," + Length1;
       }
-      if (this.Length2 == 0) {
-        coords2 = this.Start2 + ",0";
-      } else if (this.Length2 == 1) {
-        coords2 = Convert.ToString(this.Start2 + 1, System.Globalization.CultureInfo.InvariantCulture);
+      if (Length2 == 0) {
+        coords2 = Start2 + ",0";
+      } else if (Length2 == 1) {
+        coords2 = Convert.ToString(Start2 + 1, System.Globalization.CultureInfo.InvariantCulture);
       } else {
-        coords2 = this.Start2 + 1 + "," + this.Length2;
+        coords2 = Start2 + 1 + "," + Length2;
       }
       StringBuilder text = new StringBuilder();
-      text.Append("@@ -").Append(coords1).Append(" +").Append(coords2)
-          .Append(" @@\n");
+      text.Append("@@ -").Append(coords1).Append(" +").Append(coords2).AppendLine(" @@");
+
       // Escape the body of the patch with %xx notation.
-      foreach (Diff aDiff in this.Diffs) {
+      foreach (Diff aDiff in Diffs) {
         switch (aDiff.Type) {
           case Operation.INSERT:
             text.Append('+');
@@ -398,7 +398,7 @@ namespace DiffMatchPatch
               // Upon reaching an equality, check for prior redundancies.
               if (count_delete >= 1 && count_insert >= 1) {
                 // Delete the offending records and add the merged ones.
-                List<Diff> a = this.DiffMain(text_delete, text_insert, false);
+                List<Diff> a = DiffMain(text_delete, text_insert, false);
                 diffs.RemoveRange(pointer - count_delete - count_insert,
                     count_delete + count_insert);
                 pointer = pointer - count_delete - count_insert;
@@ -1147,7 +1147,7 @@ namespace DiffMatchPatch
       bool post_del = false;
       while (pointer < diffs.Count) {
         if (diffs[pointer].Type == Operation.EQUAL) {  // equality found
-          if (diffs[pointer].Text.Length < this.DiffEditCost
+          if (diffs[pointer].Text.Length < DiffEditCost
               && (post_ins || post_del)) {
             // Candidate found.
             equalities.Push(pointer);
@@ -1175,7 +1175,7 @@ namespace DiffMatchPatch
            * <ins>A</ins><del>B</del>X<del>C</del>
            */
           if ((lastequality.Length != 0) && ((pre_ins && pre_del && post_ins && post_del)
-              || ((lastequality.Length < this.DiffEditCost / 2)
+              || ((lastequality.Length < DiffEditCost / 2)
               && ((pre_ins ? 1 : 0) + (pre_del ? 1 : 0) + (post_ins ? 1 : 0)
               + (post_del ? 1 : 0)) == 3))) {
             // Duplicate record
@@ -1335,7 +1335,7 @@ namespace DiffMatchPatch
       }
       // If shifts were made, the diff needs reordering and another shift sweep.
       if (changes) {
-        this.DiffCleanupMerge(diffs);
+        DiffCleanupMerge(diffs);
       }
     }
 
@@ -1974,7 +1974,7 @@ namespace DiffMatchPatch
       // Deep copy the patches so that no changes are made to originals.
       patches = PatchDeepCopy(patches);
 
-      string nullPadding = this.PatchAddPadding(patches);
+      string nullPadding = PatchAddPadding(patches);
       text = nullPadding + text + nullPadding;
       PatchSplitMax(patches);
 
@@ -1990,22 +1990,22 @@ namespace DiffMatchPatch
         string text1 = DiffText1(aPatch.Diffs);
         int start_loc;
         int end_loc = -1;
-        if (text1.Length > this.MatchMaxBits) {
+        if (text1.Length > MatchMaxBits) {
           // patch_splitMax will only provide an oversized pattern
           // in the case of a monster delete.
           start_loc = MatchMain(text,
-              text1.Substring(0, this.MatchMaxBits), expected_loc);
+              text1.Substring(0, MatchMaxBits), expected_loc);
           if (start_loc != -1) {
             end_loc = MatchMain(text,
-                text1.Substring(text1.Length - this.MatchMaxBits),
-                expected_loc + text1.Length - this.MatchMaxBits);
+                text1.Substring(text1.Length - MatchMaxBits),
+                expected_loc + text1.Length - MatchMaxBits);
             if (end_loc == -1 || start_loc >= end_loc) {
               // Can't find valid trailing context.  Drop this patch.
               start_loc = -1;
             }
           }
         } else {
-          start_loc = this.MatchMain(text, text1, expected_loc);
+          start_loc = MatchMain(text, text1, expected_loc);
         }
         if (start_loc == -1) {
           // No match found.  :(
@@ -2022,7 +2022,7 @@ namespace DiffMatchPatch
                 Math.Min(start_loc + text1.Length, text.Length));
           } else {
             text2 = text.JavaSubstring(start_loc,
-                Math.Min(end_loc + this.MatchMaxBits, text.Length));
+                Math.Min(end_loc + MatchMaxBits, text.Length));
           }
           if (text1 == text2) {
             // Perfect match, just shove the Replacement text in.
@@ -2032,9 +2032,9 @@ namespace DiffMatchPatch
             // Imperfect match.  Run a diff to get a framework of equivalent
             // indices.
             List<Diff> diffs = DiffMain(text1, text2, false);
-            if (text1.Length > this.MatchMaxBits
+            if (text1.Length > MatchMaxBits
                 && DiffLevenshtein(diffs) / (float)text1.Length
-                > this.PatchDeleteThreshold) {
+                > PatchDeleteThreshold) {
               // The end points match, but the content is unacceptably bad.
               results[x] = false;
             } else {
@@ -2076,7 +2076,7 @@ namespace DiffMatchPatch
      */
     public string PatchAddPadding(List<Patch> patches)
     {
-      int paddingLength = this.PatchMargin;
+      int paddingLength = PatchMargin;
       string nullPadding = string.Empty;
       for (int x = 1; x <= paddingLength; x++) {
         nullPadding += (char)x;
@@ -2138,11 +2138,11 @@ namespace DiffMatchPatch
     public void PatchSplitMax(List<Patch> patches)
     {
       for (var x = 0; x < patches.Count; x++) {
-        if (patches[x].Length1 > this.MatchMaxBits) {
+        if (patches[x].Length1 > MatchMaxBits) {
           Patch bigpatch = patches[x];
           // Remove the big old patch.
           patches.Splice(x--, 1);
-          int patch_size = this.MatchMaxBits;
+          int patch_size = MatchMaxBits;
           int start1 = bigpatch.Start1;
           int start2 = bigpatch.Start2;
           string precontext = string.Empty;
@@ -2157,7 +2157,7 @@ namespace DiffMatchPatch
               patch.Diffs.Add(new Diff(Operation.EQUAL, precontext));
             }
             while (bigpatch.Diffs.Count != 0
-                && patch.Length1 < patch_size - this.PatchMargin) {
+                && patch.Length1 < patch_size - PatchMargin) {
               Operation diff_type = bigpatch.Diffs[0].Type;
               string diff_text = bigpatch.Diffs[0].Text;
               if (diff_type == Operation.INSERT) {
@@ -2200,7 +2200,7 @@ namespace DiffMatchPatch
             // Compute the head context for the next patch.
             precontext = DiffText2(patch.Diffs);
             precontext = precontext.Substring(Math.Max(0,
-                precontext.Length - this.PatchMargin));
+                precontext.Length - PatchMargin));
 
             string postcontext;
             // Append the end context for this patch.

@@ -47,11 +47,11 @@ namespace SharpDiff
 
         if (change.StartA != 0 && !continuation) {
           // no start context needed
-          currentChunk.Start1 = change.StartA - options.ContextSize;
-          currentChunk.Start2 = change.StartB - options.ContextSize;
+          currentChunk.Start1 = Math.Max(0,change.StartA - options.ContextSize);
+          currentChunk.Start2 = Math.Max(0, change.StartB - options.ContextSize);
 
           // stick some context in
-          var start = change.StartB - options.ContextSize;
+          var start = Math.Max(0, change.StartB - options.ContextSize);
           for (var j = start; j < change.StartB; j++) {
             currentChunk.Diffs.Add(new Line(Operation.EQUAL, contentTwoLines[j]));
           }

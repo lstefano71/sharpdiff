@@ -1,8 +1,8 @@
 ﻿namespace SharpDiff.Parsers.GitDiff {
     public class IndexHeader : IHeader {
         public IndexHeader(HashRange range, int? mode) {
-            this.Range = range;
-            this.Mode = mode;
+            Range = range;
+            Mode = mode;
         }
 
     public HashRange Range { get; }

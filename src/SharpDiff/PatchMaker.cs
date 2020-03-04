@@ -25,8 +25,8 @@ namespace SharpDiff
     public IEnumerable<DiffMatchPatch.Patch> MakePatch(string contentOne, string contentTwo, CompareOptions options)
     {
       var changes = My.Utils.Diff.DiffText(contentOne, contentTwo);
-      var contentOneLines = contentOne.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-      var contentTwoLines = contentTwo.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+      var contentOneLines = contentOne.Split(new[] { "\n" }, StringSplitOptions.None);
+      var contentTwoLines = contentTwo.Split(new[] { "\n" }, StringSplitOptions.None);
 
       var chunks = new HashSet<Chunk>();
       Chunk currentChunk = null;
